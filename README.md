@@ -1,4 +1,4 @@
-# Charlotte_thesis
+## Charlotte_thesis
 
 # Topic: Solving and generating puzzles with a connectivity constraint
 
