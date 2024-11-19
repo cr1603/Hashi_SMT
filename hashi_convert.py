@@ -54,7 +54,7 @@ def input():
     #print(flat_islands)
     for i in range (len(flat_islands)):
         int_islands.append(int(flat_islands[i]))
-    print(int_islands)
+    #print(int_islands)
     #print(data)
 
     #storing coordinate information as well as island number in one structure
@@ -71,16 +71,33 @@ def input():
                     island_info.append((x,index+1,int(data[x][index]))) #indices for the grid start at the top left corner with (1,1)
     print(island_info)
             
+    hashi_constraints(width, height, island_info)
 
+def v(i, j, d, w, h):
+    res = (w*h) * (i-1) + w * (j-1) + d #assumption: w = h
+    return res
 
-
-    hashi_constraints(int_islands)
-
-
-
-def hashi_constraints(int_islands):
-     res = []
+def hashi_constraints(w, h, island_info):
      
-     return res
+    #d: 0 = empty; 1 = 1 horizontal bridge; 2 = 2 horizontal bridges; 3 = 1 vertical bridge: 4: 2 vertical bridges; 5: island
+    res = []
 
+    #each cell can be one of the above defined game pieces, but only one
+    for i in range(1, w+1):
+        for j in range(1, w+1):
+            res.append([v(i, j, d, w, h) for d in range(0, 4)]) 
+            for d in range(1, 10):
+                for dp in range(d + 1, 10):
+                    res.append([-v(i, j, d, w, h), -v(i, j, dp, w, h)])
+
+    # def valid(cells):
+    #     if(i == 1 or i == h):
+    #         for d in range(3, 5):
+    #             res.append([-v(i, j, d, w, h)])
+
+
+
+    return res
+     
+        
 input()
