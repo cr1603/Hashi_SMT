@@ -57,6 +57,23 @@ def input():
     print(int_islands)
     #print(data)
 
+    #storing coordinate information as well as island number in one structure
+    #print(list(enumerate(data)))
+    island_info = []
+    for x, ele in enumerate(data):
+        #print("x:" + str(x))
+        if(x>0):
+            for y in data[x]:
+                #print("y:" + str(y))
+                #print(data[x])
+                index = data[x].find(y)
+                if(data[x][index] != '.'):
+                    island_info.append((x,index+1,int(data[x][index]))) #indices for the grid start at the top left corner with (1,1)
+    print(island_info)
+            
+
+
+
     hashi_constraints(int_islands)
 
 
