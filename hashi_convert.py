@@ -73,22 +73,57 @@ def input():
             
     hashi_constraints(width, height, island_info)
 
-def v(i, j, d, w, h):
-    res = (w*h) * (i-1) + w * (j-1) + d #assumption: w = h
-    return res
+# def piece(i, j, d, w, h):
+#     res = (w*h) * (i-1) + w * (j-1) + d #assumption: w = h
+#     return res
 
 def hashi_constraints(w, h, island_info):
      
     #d: 0 = empty; 1 = 1 horizontal bridge; 2 = 2 horizontal bridges; 3 = 1 vertical bridge: 4: 2 vertical bridges; 5: island
     res = []
+    x_coord = [x for x, y, v in island_info]
+    y_coord = [y for x, y, v in island_info]
+    value   = [v for x, y, v in island_info]
 
-    #each cell can be one of the above defined game pieces, but only one
-    for i in range(1, w+1):
-        for j in range(1, w+1):
-            res.append([v(i, j, d, w, h) for d in range(0, 4)]) 
-            for d in range(1, 10):
-                for dp in range(d + 1, 10):
-                    res.append([-v(i, j, d, w, h), -v(i, j, dp, w, h)])
+    # print("x_coord: " + str(x_coord))
+    # print("y_coord: " + str(y_coord))
+
+    #each cell can be one of the above defined game pieces, but only one (not islands, as these can be explicitly set)
+    # for i in range(1, w+1):
+    #     for j in range(1, w+1):
+    #         res.append([piece(i, j, d, w, h) for d in range(0, 5)]) 
+    #         for d in range(1, 10):
+    #             for dp in range(d + 1, 10):
+    #                 res.append([-piece(i, j, d, w, h), -piece(i, j, dp, w, h)])
+
+    #set each island piece and all possible pieces for the rest of the cells per definition of d
+    for i in range(1, h+1):    
+        #print("i outside: " + str(i))
+        for j in range(1,w+1):
+            # print("i out: " + str(i))
+            # print("j out: " + str(j))
+            if i == x_coord[0] and j == y_coord[0]:
+                # print("i if: " + str(i))
+                # print("j if: " + str(j))
+                # print("x: " + str(x_coord[0]))
+                # print("y: "+ str(y_coord[0]))
+                res.append((5))
+                x_coord.pop(0)
+                y_coord.pop(0) #remove coordinates after use
+                #print("res: " + str(res))
+            elif i == 1 or i == h+1: #upper and lower edge can only be horizontal bridges
+                # print("i else: " + str(i))
+                # print("j else: " + str(j))
+                # print("x: " + str(x_coord[0]))
+                # print("y: "+ str(y_coord[0]))
+                res.append((0,1,2))
+                #print("res: " + str(res))
+            elif j == 1 or j == w+1: # right and left edge can only be vertical bridges
+                res.append((0,3,4))
+            else:
+                res.append((0,1,2,3,4))
+    
+    print(res)
 
     # def valid(cells):
     #     if(i == 1 or i == h):
