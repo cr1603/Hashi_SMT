@@ -66,10 +66,10 @@ def input():
         #print("x:" + str(x))
         if(x>0):
             for y in data_help[x]:
-                print("y:" + str(y))
-                print(data_help[x])
+                #print("y:" + str(y))
+                #print(data_help[x])
                 index = data_help[x].find(y)
-                print("index: " + str(index))
+                #print("index: " + str(index))
                 if(data_help[x][index] != '.'):
                     island_info.append((x,index+1,int(data_help[x][index]))) #indices for the grid start at the top left corner with (1,1)
                 data_help[x] = data_help[x][:index] + '_' + data_help[x][index+1:] #replace the character after I've passed it, so islands with the same value can be recorded independedly
