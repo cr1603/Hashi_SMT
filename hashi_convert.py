@@ -1,6 +1,7 @@
 #from cvc5.pythonic import *
 import sys, getopt
 from itertools import chain
+import shutil
 
 def input():
     hashi_file = None
@@ -60,27 +61,35 @@ def input():
     #storing coordinate information as well as island number in one structure
     #print(list(enumerate(data)))
     island_info = []
-    for x, ele in enumerate(data):
+    data_help = data.copy()
+    for x, ele in enumerate(data_help):
         #print("x:" + str(x))
         if(x>0):
-            for y in data[x]:
-                #print("y:" + str(y))
-                #print(data[x])
-                index = data[x].find(y)
-                if(data[x][index] != '.'):
-                    island_info.append((x,index+1,int(data[x][index]))) #indices for the grid start at the top left corner with (1,1)
+            for y in data_help[x]:
+                print("y:" + str(y))
+                print(data_help[x])
+                index = data_help[x].find(y)
+                print("index: " + str(index))
+                if(data_help[x][index] != '.'):
+                    island_info.append((x,index+1,int(data_help[x][index]))) #indices for the grid start at the top left corner with (1,1)
+                data_help[x] = data_help[x][:index] + '_' + data_help[x][index+1:] #replace the character after I've passed it, so islands with the same value can be recorded independedly
     print(island_info)
             
-    hashi_constraints(width, height, island_info)
+    hashi_constraints(width, height, island_info, hashi_file)
 
 # def piece(i, j, d, w, h):
 #     res = (w*h) * (i-1) + w * (j-1) + d #assumption: w = h
 #     return res
 
-def hashi_constraints(w, h, island_info):
+def hashi_constraints(w, h, island_info, hashi_file):
      
     #d: 0 = empty; 1 = 1 horizontal bridge; 2 = 2 horizontal bridges; 3 = 1 vertical bridge: 4: 2 vertical bridges; 5: island
     res = []
+    help = hashi_file.split(".")
+    #print("file_name_parts: " + str(help))
+    file_name_parts = help[0].split("/")
+    #print("file_name_parts: " + str(file_name_parts))
+    file = open(shutil.copyfile('hashi.smt2', 'hashi_' + file_name_parts[7] + '.smt2'), 'a')
     x_coord = [x for x, y, v in island_info]
     y_coord = [y for x, y, v in island_info]
     value   = [v for x, y, v in island_info]
@@ -108,8 +117,10 @@ def hashi_constraints(w, h, island_info):
                 # print("x: " + str(x_coord[0]))
                 # print("y: "+ str(y_coord[0]))
                 res.append((5))
+                file.write("(assert = (Island " + str(x_coord[0]) + " " + str(y_coord[0]) + ") " + str(value[0]) + ")\n") #generating islands
                 x_coord.pop(0)
                 y_coord.pop(0) #remove coordinates after use
+                value.pop(0)
                 #print("res: " + str(res))
             elif i == 1 or i == h+1: #upper and lower edge can only be horizontal bridges
                 # print("i else: " + str(i))
@@ -123,7 +134,9 @@ def hashi_constraints(w, h, island_info):
             else:
                 res.append((0,1,2,3,4))
     
-    print(res)
+    #print(res)
+    file.close()
+
 
     # def valid(cells):
     #     if(i == 1 or i == h):
