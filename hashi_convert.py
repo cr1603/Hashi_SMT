@@ -152,6 +152,8 @@ def hashi_constraints(w, h, island_info, hashi_file):
     in_between_x = []
     in_between_y = []
 
+    bridge_list = []
+
 
     #single or double bridges between islands
     for i in range(len(island_info)):
@@ -164,6 +166,7 @@ def hashi_constraints(w, h, island_info, hashi_file):
                     file.write(f"            (= (Line {i+1} {j+1}) {1})\n")
                     file.write(f"            (= (Line {i+1} {j+1}) {2})\n")
                     file.write("        )\n")
+                    bridge_list.append((i+1, j+1))
             if y_coord[i] == y_coord[j]:
                 in_between_y.append(j)
                 if j == min(in_between_y):
@@ -172,11 +175,20 @@ def hashi_constraints(w, h, island_info, hashi_file):
                     file.write(f"            (= (Line {i+1} {j+1}) {1})\n")
                     file.write(f"            (= (Line {i+1} {j+1}) {2})\n")
                     file.write("        )\n")
+                    bridge_list.append((i+1, j+1))
         
         in_between_x = []
         in_between_y = []
 
-    
+    #number of bridges connected to an island equals value of island
+    #print(bridge_list)
+    for i in range(len(island_info)):
+        file.write(f"       (= (Island {x_coord[i]} {y_coord[i]}) (+ 0")
+        for island1, island2 in bridge_list:
+            if i+1 == island1 or i+1 == island2:
+                file.write(f" (Line {island1} {island2})")
+            #print(island1, island2)
+        file.write("))\n")
     
     file.write("    )\n)\n\n") #bridge constraints are finished here
     #print(res)
