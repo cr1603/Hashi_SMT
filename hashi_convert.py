@@ -121,7 +121,7 @@ def hashi_constraints(w, h, island_info, hashi_file):
                 # print("x: " + str(x_coord[0]))
                 # print("y: "+ str(y_coord[0]))
                 res.append((5))
-                file.write("        (= (Island " + str(x_coord[0]) + " " + str(y_coord[0]) + ") " + str(value[0]) + ")\n") #generating islands
+                file.write(f"        (= (Island {x_coord[0]} {y_coord[0]}) {value[0]})\n") #generating islands
                 x_coord.pop(0)
                 y_coord.pop(0) #remove coordinates after use
                 value.pop(0)
