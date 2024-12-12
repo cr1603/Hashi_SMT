@@ -105,6 +105,7 @@ def hashi_constraints(w, h, island_info, hashi_file):
     #             for dp in range(d + 1, 10):
     #                 res.append([-piece(i, j, d, w, h), -piece(i, j, dp, w, h)])
 
+    #start island constraints
     file.write("(assert\n")
     file.write("    (and\n")
 
@@ -137,9 +138,31 @@ def hashi_constraints(w, h, island_info, hashi_file):
             else:
                 res.append((0,1,2,3,4))
 
-    file.write("    )\n)") #island constraint are finished here
+    file.write("    )\n)\n\n") #island constraints are finished here
+
+
+    #start bridge constraints
+    file.write("(assert\n")
+    file.write("    (and\n")
+
+    x_coord = [x for x, y, v in island_info]
+    y_coord = [y for x, y, v in island_info]
+    value   = [v for x, y, v in island_info]
+
+    #single or double bridges between islands
+    for i in range(len(island_info)):
+        for j in range(i+1, len(island_info)):
+            if x_coord[i] == x_coord[j] or y_coord[i] == y_coord[j]:
+                file.write("        (or\n")
+                file.write(f"            (= (Line {i+1} {j+1}) {0})\n")
+                file.write(f"            (= (Line {i+1} {j+1}) {1})\n")
+                file.write(f"            (= (Line {i+1} {j+1}) {2})\n")
+                file.write("        )\n")
+
     
-    print(res)
+    
+    file.write("    )\n)\n\n") #bridge constraints are finished here
+    #print(res)
     file.close()
 
     # def valid(cells):

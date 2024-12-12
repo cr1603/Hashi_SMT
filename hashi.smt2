@@ -5,5 +5,5 @@
 
 
 (declare-fun Island (Int Int) Int)
-(declare-fun Line (Int Int Int Int) Int)
+(declare-fun Line (Int Int) Int)
 
