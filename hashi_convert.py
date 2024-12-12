@@ -47,7 +47,7 @@ def input():
             islands[x].remove("")
     islands = [ele for ele in islands if ele !=[]]
     #print(type(islands))
-    #print(islands)
+    print(islands)
 
     #flattening islands array and turning it into an integer array
     int_islands = []
@@ -105,6 +105,9 @@ def hashi_constraints(w, h, island_info, hashi_file):
     #             for dp in range(d + 1, 10):
     #                 res.append([-piece(i, j, d, w, h), -piece(i, j, dp, w, h)])
 
+    file.write("(assert\n")
+    file.write("    (and\n")
+
     #set each island piece and all possible pieces for the rest of the cells per definition of d
     for i in range(1, h+1):    
         #print("i outside: " + str(i))
@@ -117,7 +120,7 @@ def hashi_constraints(w, h, island_info, hashi_file):
                 # print("x: " + str(x_coord[0]))
                 # print("y: "+ str(y_coord[0]))
                 res.append((5))
-                file.write("(assert = (Island " + str(x_coord[0]) + " " + str(y_coord[0]) + ") " + str(value[0]) + ")\n") #generating islands
+                file.write("        (= (Island " + str(x_coord[0]) + " " + str(y_coord[0]) + ") " + str(value[0]) + ")\n") #generating islands
                 x_coord.pop(0)
                 y_coord.pop(0) #remove coordinates after use
                 value.pop(0)
@@ -133,10 +136,11 @@ def hashi_constraints(w, h, island_info, hashi_file):
                 res.append((0,3,4))
             else:
                 res.append((0,1,2,3,4))
-    
-    #print(res)
-    file.close()
 
+    file.write("    )\n)") #island constraint are finished here
+    
+    print(res)
+    file.close()
 
     # def valid(cells):
     #     if(i == 1 or i == h):
