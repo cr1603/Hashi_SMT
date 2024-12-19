@@ -189,6 +189,21 @@ def hashi_constraints(w, h, island_info, hashi_file):
                 file.write(f" (Line {island1} {island2})")
             #print(island1, island2)
         file.write("))\n")
+
+    #bridges cannot cross each other
+    #check horizontal connections for crossing vertical connections
+    #only check tow pairs of islands at a time
+    for islandx1, islandx2 in bridge_list:
+        for islandy1, islandy2 in bridge_list:
+            if x_coord[islandx1-1] == x_coord[islandx2-1]:
+                if ((x_coord[islandx1-1] > x_coord[islandy1-1]) and (x_coord[islandx1-1] < x_coord[islandy2-1])) or ((x_coord[islandx1-1] < x_coord[islandy1-1]) and (x_coord[islandx1-1] > x_coord[islandy2-1])):
+                    if ((y_coord[islandy1-1] > y_coord[islandx1-1]) and (y_coord[islandy1-1] < y_coord[islandx2-1])) or ((y_coord[islandy1-1] < y_coord[islandx1-1]) and (y_coord[islandy1-1] > y_coord[islandx2-1])):
+                        file.write("       (or\n")
+                        file.write(f"           (= 0 (Line {islandx1} {islandx2}))\n")
+                        file.write(f"           (= 0 (Line {islandy1} {islandy2}))\n")
+                        file.write("        )\n")
+
+
     
     file.write("    )\n)\n\n") #bridge constraints are finished here
     #print(res)
