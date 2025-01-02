@@ -206,7 +206,38 @@ def hashi_constraints(w, h, island_info, hashi_file):
 
     
     file.write("    )\n)\n\n") #bridge constraints are finished here
+
+    #connectivity constraint
+    #print(x_coord)
+    file.write(f"(assert (= 0 (Number {x_coord[0]} {y_coord[0]})))\n\n")
+
+    # island1 = [a for a, b in bridge_list]
+    # island2 = [b for a, b in bridge_list]
+    
+    for i in range(1, len(x_coord)):
+        file.write("(assert (=> (not (or")
+        for island1, island2 in bridge_list:
+            if i == island1 or i == island2:
+                file.write(f" (> (Line {island1} {island2}) 0)")
+        file.write(f") (= -1 (Number {x_coord[i]} {y_coord[i]})))))\n")
+    file.write("\n")
+
+    for island1, island2 in bridge_list:
+        for i in range(len(x_coord)):
+            if i+1 == island1:
+                file.write(f"(assert (=> (> (Line {island1} {island2}) 0)) (< (Number {x_coord[island2-1]} {y_coord[island2-1]}) (Number {x_coord[island1-1]} {y_coord[island1-1]})))\n")
+    file.write("\n")
+
+    for island1, island2 in bridge_list:
+        for i in range(len(x_coord)):
+            if i+1 == island1:
+                file.write(f"(assert (exists ((k Int)) (and (> (Line {island1} {island2}) 0) (< (Number {x_coord[island2-1]} {y_coord[island2-1]}) (Number {x_coord[island1-1]} {y_coord[island1-1]})))))\n")
+    file.write("\n")
+ 
+
     #print(res)
+    file.write("(check-sat)\n")
+    file.write("(get-model)")
     file.close()
 
     # def valid(cells):

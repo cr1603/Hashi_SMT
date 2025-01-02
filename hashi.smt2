@@ -7,3 +7,5 @@
 (declare-fun Island (Int Int) Int)
 (declare-fun Line (Int Int) Int)
 
+(declare-fun Number (Int Int) Int)
+
