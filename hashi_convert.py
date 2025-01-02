@@ -228,11 +228,11 @@ def hashi_constraints(w, h, island_info, hashi_file):
                 file.write(f"(assert (=> (> (Line {island1} {island2}) 0) (< (Number {x_coord[island2-1]} {y_coord[island2-1]}) (Number {x_coord[island1-1]} {y_coord[island1-1]}))))\n")
     file.write("\n")
 
-    for island1, island2 in bridge_list:
-        for i in range(len(x_coord)):
-            if i+1 == island1:
-                file.write(f"(assert (exists ((k Int)) (and (> (Line {island1} {island2}) 0) (< (Number {x_coord[island2-1]} {y_coord[island2-1]}) (Number {x_coord[island1-1]} {y_coord[island1-1]})))))\n")
-    file.write("\n")
+    # for island1, island2 in bridge_list:
+    #     for i in range(len(x_coord)):
+    #         if i+1 == island1:
+    #             file.write(f"(assert (exists ((k Int)) (and (> (Line {island1} {island2}) 0) (< (Number {x_coord[island2-1]} {y_coord[island2-1]}) (Number {x_coord[island1-1]} {y_coord[island1-1]})))))\n")
+    # file.write("\n")
  
 
     #print(res)
