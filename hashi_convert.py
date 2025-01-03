@@ -35,8 +35,8 @@ def input():
     grid_wxh = data[0].split(' ')
     #print(grid_wxh)
 
-    width = int(grid_wxh[0])
-    height = int(grid_wxh[1])
+    height = int(grid_wxh[0])
+    width = int(grid_wxh[1])
 
     # extract information about the islands from the rest of the file: removing "." and subsequent empty entries
     islands = []
@@ -108,6 +108,9 @@ def hashi_constraints(w, h, island_info, hashi_file):
     #start island constraints
     file.write("(assert\n")
     file.write("    (and\n")
+
+    # print("width: " + str(w))
+    # print("height: " + str(h))
 
     #set each island piece and all possible pieces for the rest of the cells per definition of d
     for i in range(1, h+1):    
