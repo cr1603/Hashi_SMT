@@ -129,16 +129,16 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
     for i in range(1, h+1):    
         #print("i outside: " + str(i))
         for j in range(1,w+1):
-            print("i out: " + str(i))
-            print("j out: " + str(j))
+            # print("i out: " + str(i))
+            # print("j out: " + str(j))
             if islands_with_0[i-1][j-1] == "0":
-                print("islands with 0 value: " + str(islands_with_0[i-1][j-1]))
+                # print("islands with 0 value: " + str(islands_with_0[i-1][j-1]))
                 continue
             if i == x_coord[0] and j == y_coord[0]:
-                print("i if: " + str(i))
-                print("j if: " + str(j))
-                print("x: " + str(x_coord[0]))
-                print("y: "+ str(y_coord[0]))
+                # print("i if: " + str(i))
+                # print("j if: " + str(j))
+                # print("x: " + str(x_coord[0]))
+                # print("y: "+ str(y_coord[0]))
                 res.append((5))
                 file.write(f"        (= (Island {x_coord[0]} {y_coord[0]}) {value[0]})\n") #generating islands
                 x_coord.pop(0)
@@ -226,32 +226,54 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
     
     file.write("    )\n)\n\n") #bridge constraints are finished here
 
-    # #connectivity constraint
-    # #print(x_coord)
-    # file.write(f"(assert (= 0 (Number {x_coord[0]} {y_coord[0]})))\n\n")
+    #connectivity constraint
+    #print(x_coord)
+    file.write(f"(assert (= 0 (Number {x_coord[0]} {y_coord[0]})))\n\n")
 
-    # # island1 = [a for a, b in bridge_list]
-    # # island2 = [b for a, b in bridge_list]
+    # island1 = [a for a, b in bridge_list]
+    # island2 = [b for a, b in bridge_list]
+
+    file.write("(assert\n")
     
-    # for i in range(1, len(x_coord)):
-    #     file.write("(assert (=> (not (or")
-    #     for island1, island2 in bridge_list:
-    #         if i == island1 or i == island2:
-    #             file.write(f" (> (Line {island1} {island2}) 0)")
-    #     file.write(f")) (= -1 (Number {x_coord[i]} {y_coord[i]}))))\n")
-    # file.write("\n")
+    for i in range(1, len(x_coord)):
+        #no connections
+        file.write("    (implies\n")
+        file.write("        (and\n")
+        for island1, island2 in bridge_list:
+            if i == island1 or i == island2:
+                file.write(f"           (= (Line {island1} {island2}) 0)\n")
+        file.write("        )\n")
+        file.write(f"        (= (Number {x_coord[i]} {y_coord[i]}) -1)\n")
+        file.write("    )\n")
+        #connections present
+        for island1, island2 in bridge_list:
+            file.write("    (implies\n")
+            file.write("        (and ")
+            if i == island1 or i == island2:
+                file.write(f"(> (Line {island1} {island2}) 0))\n")
+            file.write("        (and\n")
+            file.write(f"           (> (Number {x_coord[i]} {y_coord[i]}) 0)\n")
+            file.write("            (or\n")
+            for island1, island2 in bridge_list:
+                if i == island1 or i == island2:
+                    file.write(f"               (> (Number {x_coord[island1-1]} {y_coord[island1-1]}) (Number {x_coord[island2-1]} {y_coord[island2-1]}))\n")
+            file.write("            )\n")
+            file.write("        )\n")            
+            file.write("    )\n")
 
-    # for island1, island2 in bridge_list:
-    #     for i in range(len(x_coord)):
-    #         if i+1 == island1:
-    #             file.write(f"(assert (=> (> (Line {island1} {island2}) 0) (< (Number {x_coord[island2-1]} {y_coord[island2-1]}) (Number {x_coord[island1-1]} {y_coord[island1-1]}))))\n")
-    # file.write("\n")
+    file.write(")\n")
 
-    # for island1, island2 in bridge_list:
-    #     for i in range(len(x_coord)):
-    #         if i+1 == island1:
-    #             file.write(f"(assert (exists ((k Int)) (and (> (Line {island1} {island2}) 0) (< (Number {x_coord[island2-1]} {y_coord[island2-1]}) (Number {x_coord[island1-1]} {y_coord[island1-1]})))))\n")
-    # file.write("\n")
+    for island1, island2 in bridge_list:
+        for i in range(len(x_coord)):
+            if i+1 == island1:
+                file.write(f"(assert (=> (> (Line {island1} {island2}) 0) (< (Number {x_coord[island2-1]} {y_coord[island2-1]}) (Number {x_coord[island1-1]} {y_coord[island1-1]}))))\n")
+    file.write("\n")
+
+    for island1, island2 in bridge_list:
+        for i in range(len(x_coord)):
+            if i+1 == island1:
+                file.write(f"(assert (exists ((k Int)) (and (> (Line {island1} {island2}) 0) (< (Number {x_coord[island2-1]} {y_coord[island2-1]}) (Number {x_coord[island1-1]} {y_coord[island1-1]})))))\n")
+    file.write("\n")
  
 
     #print(res)
