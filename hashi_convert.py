@@ -235,12 +235,13 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
 
     file.write("(assert\n")
     
-    for i in range(1, len(x_coord)):
+    for i in range(1, len(island_info)):
         #no connections
         file.write("    (implies\n")
         file.write("        (and\n")
         for island1, island2 in bridge_list:
-            if i == island1 or i == island2:
+            if i+1 == island1 or i+1 == island2:
+                #print(f"i: {i}, x_coord: {x_coord}, x_coord[i]: {x_coord[i]}, island_info: {island_info}, island_info[i]: {island_info[i]}, island1: {island1}, island2: {island2}\n")
                 file.write(f"           (= (Line {island1} {island2}) 0)\n")
         file.write("        )\n")
         file.write(f"        (= (Number {x_coord[i]} {y_coord[i]}) -1)\n")
