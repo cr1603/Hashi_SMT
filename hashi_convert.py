@@ -3,6 +3,14 @@ import sys, getopt
 from itertools import chain
 import shutil
 
+def binomialcoefficient(n, k):
+    if (k==0) or (k==n):
+        res = 1
+    else:
+        #print(n, k)
+        res = binomialcoefficient(n-1, k-1) + binomialcoefficient(n-1, k)
+    return res
+
 def input():
     hashi_file = None
 
@@ -233,11 +241,18 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
     # island1 = [a for a, b in bridge_list]
     # island2 = [b for a, b in bridge_list]
 
-    file.write("(assert\n")
+    n = 0
+    k = 2
+    num_combination_of_bridges = 0
+    for island1, island2 in bridge_list:
+        if i+1 == island1 or i+1 == island2: #only as many combinations as there are possible bridges connected to island
+            n += 1
+    num_combination_of_bridges = binomialcoefficient(n,k)
     
     for i in range(1, len(island_info)):
+        file.write("(assert\n")
         #no connections
-        file.write("    (implies\n")
+        file.write("    (=>\n")
         file.write("        (and\n")
         for island1, island2 in bridge_list:
             if i+1 == island1 or i+1 == island2:
@@ -246,14 +261,20 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
         file.write("        )\n")
         file.write(f"        (= (Number {x_coord[i]} {y_coord[i]}) -1)\n")
         file.write("    )\n")
+        file.write(")\n")
         #connections present
-        for island1, island2 in bridge_list:
-            file.write("    (implies\n")
-            file.write("        (and ")
-            if i == island1 or i == island2:
-                file.write(f"(> (Line {island1} {island2}) 0))\n")
+        for count in range(num_combination_of_bridges):
+            #print(f" binomialcoefficient: {binomialcoefficient(n, k)}\n")
+            file.write("(assert\n")
+            file.write("    (=>\n")
+            file.write("        (and true")
+            for island1, island2 in bridge_list:
+                if i+1 == island1 or i+1 == island2:
+                    #print(f"i: {i}, bridge_list: {bridge_list}, island1: {island1}, island2: {island2}\n")
+                    file.write(f" (> (Line {island1} {island2}) 0)")
+            file.write(")\n")
             file.write("        (and\n")
-            file.write(f"           (> (Number {x_coord[i]} {y_coord[i]}) 0)\n")
+            file.write(f"            (> (Number {x_coord[i]} {y_coord[i]}) 0)\n")
             file.write("            (or\n")
             for island1, island2 in bridge_list:
                 if i == island1 or i == island2:
@@ -261,20 +282,22 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
             file.write("            )\n")
             file.write("        )\n")            
             file.write("    )\n")
+            file.write(")\n")
 
-    file.write(")\n")
-
-    for island1, island2 in bridge_list:
-        for i in range(len(x_coord)):
-            if i+1 == island1:
-                file.write(f"(assert (=> (> (Line {island1} {island2}) 0) (< (Number {x_coord[island2-1]} {y_coord[island2-1]}) (Number {x_coord[island1-1]} {y_coord[island1-1]}))))\n")
+    
     file.write("\n")
 
-    for island1, island2 in bridge_list:
-        for i in range(len(x_coord)):
-            if i+1 == island1:
-                file.write(f"(assert (exists ((k Int)) (and (> (Line {island1} {island2}) 0) (< (Number {x_coord[island2-1]} {y_coord[island2-1]}) (Number {x_coord[island1-1]} {y_coord[island1-1]})))))\n")
-    file.write("\n")
+    # for island1, island2 in bridge_list:
+    #     for i in range(len(x_coord)):
+    #         if i+1 == island1:
+    #             file.write(f"(assert (=> (> (Line {island1} {island2}) 0) (< (Number {x_coord[island2-1]} {y_coord[island2-1]}) (Number {x_coord[island1-1]} {y_coord[island1-1]}))))\n")
+    # file.write("\n")
+
+    # for island1, island2 in bridge_list:
+    #     for i in range(len(x_coord)):
+    #         if i+1 == island1:
+    #             file.write(f"(assert (exists ((k Int)) (and (> (Line {island1} {island2}) 0) (< (Number {x_coord[island2-1]} {y_coord[island2-1]}) (Number {x_coord[island1-1]} {y_coord[island1-1]})))))\n")
+    # file.write("\n")
  
 
     #print(res)
