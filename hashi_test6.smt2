@@ -49,26 +49,5 @@
     )
 )
 
-(assert
-    (forall ((i Int) (n Int))
-        (=> (and
-                (> i 1) (<= i 4)
-                (> n 1) (<= n 4)
-            )
-            (and
-                (= (Connected_in 1 i) true)
-                (= (Connected_in n 1) (> (Line 1 n) 0))
-                (= (Connected_in n i) (or (Connected_in n (- i 1)) (exists ((z Int))
-                                                                        (=> (and
-                                                                                (> z 1) (< z 4)
-                                                                            )
-                                                                            (and (Connected_in z (- i 1)) (> (Line z n) 0))
-                                                                        ))))
-                (= (Connected_in n 3) true)
-            )
-        )       
-    )
-)
-
 (check-sat)
 (get-model)
