@@ -1,7 +1,7 @@
 import subprocess
 from verifier import *
 
-test_to_run = "test6"
+test_to_run = "test1"
 
 convert_to_smt = f"python3 hashi_convert.py -f \"/mnt/e/Charlotte/Uni/Bachelorarbeit/input/{test_to_run}.txt\""
 
@@ -20,4 +20,6 @@ output = result.stdout.strip()
 
 #print(output)
 
-output_formatter(output, island_info)
+adjacency_matrix = output_formatter(output, island_info)
+
+print(adjacency_matrix)
