@@ -37,7 +37,7 @@ def input():
     # extract data from file
     with open(hashi_file, encoding = 'utf8') as f:
         data = [line.strip('\n') for line in f.readlines()]
-    print (data)
+    #print (data)
 
     # first line is the dimensions of the game board
     grid_wxh = data[0].split(' ')
@@ -56,7 +56,7 @@ def input():
             islands[x].remove("")
     islands = [ele for ele in islands if ele !=[]]
     #print(type(islands))
-    print(islands)
+    #print(islands)
 
     #flattening islands array and turning it into an integer array
     int_islands = []
@@ -72,7 +72,7 @@ def input():
     # int_islands_with_0 = []
     for i in range (1, len(data)):
         islands_with_0.append(data[i].replace(".", "0"))
-    print(islands_with_0)
+    #print(islands_with_0)
     # islands_with_0 = list(chain.from_iterable(islands_with_0))
     # for i in range (len(islands_with_0)):
     #     int_islands_with_0.append(int(islands_with_0[i]))
@@ -97,6 +97,8 @@ def input():
     print(island_info)
             
     hashi_constraints(width, height, island_info, hashi_file, islands_with_0)
+
+    return island_info
 
 # def piece(i, j, d, w, h):
 #     res = (w*h) * (i-1) + w * (j-1) + d #assumption: w = h
@@ -312,11 +314,11 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
     # # file.write("\n")
 
 
-    #connectivity constraint take 2
-    node_0 = 1
-    #steps = 0
-    #node_0 is trivially connected to itself in 0 steps
-    #file.write(f"(assert (= true (Connected_in ({node_0} i))))")
+    # #connectivity constraint take 2
+    # node_0 = 1
+    # #steps = 0
+    # #node_0 is trivially connected to itself in 0 steps
+    # #file.write(f"(assert (= true (Connected_in ({node_0} i))))")
  
 
     #print(res)
