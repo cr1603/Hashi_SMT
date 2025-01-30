@@ -170,9 +170,6 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
     file.write("    )\n)\n\n") #island constraints are finished here
 
 
-    # #for connecivity:
-    # adjacency_matrix = [[0 for _ in range(len(island_info))] for _ in range(len(island_info))]
-
     #start bridge constraints
     file.write("(assert\n")
     file.write("    (and\n")

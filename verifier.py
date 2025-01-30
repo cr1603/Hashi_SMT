@@ -34,6 +34,11 @@ def check_for_ite(output_help):
 def output_formatter(output, island_info):
     adjacency_matrix = [[0 for _ in range(len(island_info))] for _ in range(len(island_info))]
 
+    for i in range(len(adjacency_matrix)):
+        for j in range(len(adjacency_matrix)):
+            if i == j:
+                adjacency_matrix[i][j] = 1
+
     # print(output)
     # print(len(island_info))
     # print(len(adjacency_matrix))
@@ -57,7 +62,7 @@ def output_formatter(output, island_info):
             else:
                 break      
 
-        output_help = output_help[1:]
+        #output_help = output_help[1:]
         # print(output_help)
 
 

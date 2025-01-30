@@ -1,7 +1,7 @@
 import subprocess
 from verifier import *
 
-test_to_run = "test6"
+test_to_run = "test1"
 
 convert_to_smt = f"python3 hashi_convert.py -f \"/mnt/e/Charlotte/Uni/Bachelorarbeit/input/{test_to_run}.txt\""
 
