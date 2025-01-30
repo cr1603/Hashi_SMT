@@ -19,14 +19,17 @@ def island2func(output_help, island1, adjacency_matrix):
     output_help = output_help[1:]
     return adjacency_matrix, output_help
 
-
 def island1func(output_help):
     output_help = skip_to(output_help, "_arg_1")
     island1 = save_output_as_island(output_help)
     output_help = output_help[1:]
     return island1, output_help
 
-
+def check_for_ite(output_help):
+    ite_found = False
+    if "ite" in output_help:
+        ite_found = True
+    return ite_found
 
 def output_formatter(output, island_info):
     adjacency_matrix = [[0 for _ in range(len(island_info))] for _ in range(len(island_info))]
@@ -40,20 +43,21 @@ def output_formatter(output, island_info):
     print(output_help)
     if output_help[:3] == "sat":
         output_help = skip_to(output_help, "Line")
-        #print(output_help)
+        print(output_help)
         while output_help[:11] != "(define-fun":
-            if len(output_help) > 28: #some kind of threshold, so it terminates after the last argument
+            if check_for_ite(output_help):
                 output_help = skip_to(output_help, "ite")
                 if output_help[:13] == "ite (= _arg_1":
                     island1, output_help = island1func(output_help)
                 if output_help[:13] == "ite (= _arg_2":
                     adjacency_matrix, output_help = island2func(output_help, island1, adjacency_matrix)
-                print(len(output_help))
-            print(adjacency_matrix)
+            #print(len(output_help))
+            #print(adjacency_matrix)
 
-        #else: break      
+            else:
+                break      
 
-        # output_help = output_help[1:]
+        output_help = output_help[1:]
         # print(output_help)
 
 
