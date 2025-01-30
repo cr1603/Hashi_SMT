@@ -10,6 +10,22 @@ def save_output_as_island(output_help):
     island = int(output_help[7:i])
     return island
 
+def island2func(output_help, island1, adjacency_matrix):
+    output_help = skip_to(output_help, "_arg_2")
+    island2 = save_output_as_island(output_help)
+    adjacency_matrix[island1-1][island2-1] = 1
+    adjacency_matrix[island2-1][island1-1] = 1
+    output_help = output_help[1:]
+    return adjacency_matrix, output_help
+
+
+def island1func(output_help):
+    output_help = skip_to(output_help, "_arg_1")
+    island1 = save_output_as_island(output_help)
+    output_help = output_help[1:]
+    return island1, output_help
+
+
 
 def output_formatter(output, island_info):
     adjacency_matrix = [[0 for _ in range(len(island_info))] for _ in range(len(island_info))]
@@ -20,33 +36,16 @@ def output_formatter(output, island_info):
     # print(len(adjacency_matrix[0]))
 
     output_help = str(output)
-    #print(output_help)
+    print(output_help)
     output_help = skip_to(output_help, "Line")
     #print(output_help)
-    while output_help[0] != "\n":
+    while output_help[:11] != "(define-fun)":
         output_help = skip_to(output_help, "ite")
-        #print(output_help)
-        output_help = skip_to(output_help, "_arg_1")
-        #print(output_help)
-        island1 = save_output_as_island(output_help)
-        # print(output_help[7])
-        # print(f"island1: {island1}")
-        # print(type(island1))
-        output_help = output_help[1:]
-        output_help = skip_to(output_help, "_arg_2")
-        #print(output_help)
-        island2 = save_output_as_island(output_help)
-        # print(output_help[7])
-        # print(f"island2: {island2}")
-        # print(type(island2))
-        
-        adjacency_matrix[island1-1][island2-1] = 1
-        adjacency_matrix[island2-1][island1-1] = 1
-        print(adjacency_matrix)
-
-        while (output_help[:6] != "_arg_1") or (output_help[:6] != "_arg_2"):
-            output_help = output_help[1:]
-        
+        if output_help[:13] == "ite (= _arg_1":
+            island1, output_help = island1func(output_help)
+        if output_help[:13] == "ite (= _arg_2":
+            adjacency_matrix, output_help = island2func(output_help, island1, adjacency_matrix)
+        print(adjacency_matrix)       
 
         output_help = output_help[1:]
 
