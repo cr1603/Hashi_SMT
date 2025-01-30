@@ -38,17 +38,18 @@ def output_formatter(output, island_info):
 
     output_help = str(output)
     print(output_help)
-    output_help = skip_to(output_help, "Line")
-    #print(output_help)
-    while output_help[:11] != "(define-fun":
-        if len(output_help) > 28: #some kind of threshold, so it terminates after the last argument
-            output_help = skip_to(output_help, "ite")
-            if output_help[:13] == "ite (= _arg_1":
-                island1, output_help = island1func(output_help)
-            if output_help[:13] == "ite (= _arg_2":
-                adjacency_matrix, output_help = island2func(output_help, island1, adjacency_matrix)
-            print(len(output_help))
-        print(adjacency_matrix)
+    if output_help[:3] == "sat":
+        output_help = skip_to(output_help, "Line")
+        #print(output_help)
+        while output_help[:11] != "(define-fun":
+            if len(output_help) > 28: #some kind of threshold, so it terminates after the last argument
+                output_help = skip_to(output_help, "ite")
+                if output_help[:13] == "ite (= _arg_1":
+                    island1, output_help = island1func(output_help)
+                if output_help[:13] == "ite (= _arg_2":
+                    adjacency_matrix, output_help = island2func(output_help, island1, adjacency_matrix)
+                print(len(output_help))
+            print(adjacency_matrix)
 
         #else: break      
 
