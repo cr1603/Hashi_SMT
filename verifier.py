@@ -1,3 +1,5 @@
+import numpy as np
+
 def skip_to(output_help, str):
     while output_help[:(len(str))] != str:
         output_help = output_help[1:]
@@ -45,10 +47,10 @@ def output_formatter(output, island_info):
     # print(len(adjacency_matrix[0]))
 
     output_help = str(output)
-    print(output_help)
+    #print(output_help)
     if output_help[:3] == "sat":
         output_help = skip_to(output_help, "Line")
-        print(output_help)
+        #print(output_help)
         while output_help[:11] != "(define-fun":
             if check_for_ite(output_help):
                 output_help = skip_to(output_help, "ite")
@@ -72,5 +74,28 @@ def output_formatter(output, island_info):
 def verifier(adjacency_matrix):
     connectivity_satisfied = False
 
+    changed = True
+
+    while(changed):
+        changed = False
+        for start in range (len(adjacency_matrix)):
+            for end in range (len(adjacency_matrix)):
+                if adjacency_matrix[start][end] == 0:
+                    for middle in range (len(adjacency_matrix)):
+                        if adjacency_matrix[start][middle] == 1 and adjacency_matrix[middle][end] == 1:
+                            adjacency_matrix[start][end] = 1
+                            changed = True
+                            #print(np.matrix(adjacency_matrix))
+                            break
+    
+    
+    # print(np.matrix(adjacency_matrix))
+    # print(len(adjacency_matrix))
+
+    checkerlist = [1 for i in range (len(adjacency_matrix))]
+    #print(checkerlist)
+    
+    connectivity_satisfied = (all(x == checkerlist for x in adjacency_matrix))
+    #print(all(x == checkerlist for x in adjacency_matrix))
 
     return connectivity_satisfied

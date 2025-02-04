@@ -1,4 +1,5 @@
 import subprocess
+import numpy as np
 from verifier import *
 
 test_to_run = "test1"
@@ -18,8 +19,12 @@ print(len(island_info))
 result = subprocess.run(run_smt, capture_output=True, text=True, shell=True)
 output = result.stdout.strip()
 
-#print(output)
+print(output)
 
 adjacency_matrix = output_formatter(output, island_info)
 
-print(adjacency_matrix)
+print(np.matrix(adjacency_matrix))
+
+connectivity = verifier(adjacency_matrix)
+
+print(connectivity)
