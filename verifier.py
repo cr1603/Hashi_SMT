@@ -131,14 +131,14 @@ def add_to_smt_file(bridge_list, test_file):
         file.seek(pos + 1, os.SEEK_SET)
         file.truncate()
 
-    file.write("\n")
     file.write("(assert\n")
-    file.write("    (and\n")
+    file.write("    (not\n")
+    file.write("        (and\n")
 
     for island1, island2, value in bridge_list:
-        file.write(f"       (not (= (Line {island1} {island2}) {value}))\n")
+        file.write(f"           (= (Line {island1} {island2}) {value})\n")
     
-    file.write("    )\n)\n\n")
+    file.write("        )\n)\n)\n\n")
 
     file.write("(check-sat)\n")
     file.write("(get-model)")

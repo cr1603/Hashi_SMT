@@ -33,4 +33,3 @@ while(not connectivity):
     if(not connectivity):
         add_to_smt_file(bridge_list, test_file)
 
-        
