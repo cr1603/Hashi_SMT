@@ -6,7 +6,7 @@ test_to_run = "test1"
 
 convert_to_smt = f"python3 hashi_convert.py -f \"/mnt/e/Charlotte/Uni/Bachelorarbeit/input/{test_to_run}.txt\""
 
-run_smt = f"./cvc5 hashi_{test_to_run}.smt2"
+run_smt = f"./cvc5 hashi_{test_to_run}.smt2 --incremental"
 
 result = subprocess.run(convert_to_smt, capture_output=True, text=True, shell=True)
 helper = result.stdout.strip()
