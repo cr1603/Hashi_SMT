@@ -60,21 +60,33 @@ def output_formatter(output, island_info):
     output_help = str(output)
     #print(output_help)
     bridge_list = []
-    if output_help[:3] == "sat":
-        output_help = skip_to(output_help, "Line")
-        #print(output_help)
-        while output_help[:11] != "(define-fun":
-            if check_for_ite(output_help):
-                output_help = skip_to(output_help, "ite")
-                if output_help[:13] == "ite (= _arg_1":
-                    island1, output_help = island1func(output_help)
-                if output_help[:13] == "ite (= _arg_2":
-                    adjacency_matrix, output_help, bridge_list = island2func(output_help, island1, adjacency_matrix, bridge_list)
-            #print(len(output_help))
-            #print(adjacency_matrix)
+    #if output_help[:3] == "sat":
+    output_help = skip_to(output_help, "Line")
+    #print(output_help)
+    while output_help[:11] != "(define-fun":
+        if check_for_ite(output_help):
+            output_help = skip_to(output_help, "ite")
+            if output_help[:13] == "ite (= _arg_1":
+                island1, output_help = island1func(output_help)
+            if output_help[:13] == "ite (= _arg_2":
+                adjacency_matrix, output_help, bridge_list = island2func(output_help, island1, adjacency_matrix, bridge_list)
+        #print(len(output_help))
+        #print(adjacency_matrix)
 
-            else:
-                break      
+        elif output_help.startswith("Line"):
+            output_help = skip_to(output_help, ") Int")
+            i = 6
+            #print(output_help[i])
+            while output_help[i].isnumeric():
+                i += 1
+            bridge_value = int(output_help[6:i])
+            if bridge_value == 2:
+                bridge_value -= 1
+            adjacency_matrix = [[bridge_value for _ in range(len(island_info))] for _ in range(len(island_info))]
+            break                    
+
+        else:
+            break
 
         #output_help = output_help[1:]
         # print(output_help)
@@ -89,7 +101,7 @@ def verifier(adjacency_matrix):
 
     changed = True
 
-    while(changed):
+    while(changed): #Breadth-First-Search BFS
         changed = False
         for start in range (len(adjacency_matrix)):
             for end in range (len(adjacency_matrix)):
@@ -138,7 +150,7 @@ def add_to_smt_file(bridge_list, test_file):
     for island1, island2, value in bridge_list:
         file.write(f"           (= (Line {island1} {island2}) {value})\n")
     
-    file.write("        )\n)\n)\n\n")
+    file.write("        )\n    )\n)\n\n")
 
     file.write("(check-sat)\n")
     file.write("(get-model)")

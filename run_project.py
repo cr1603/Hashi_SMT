@@ -2,11 +2,11 @@ import subprocess
 import numpy as np
 from verifier import *
 
-test_to_run = "test6"
-test_file = f"hashi_{test_to_run}.smt2"
+test_to_run = "5"
+test_file = f"hashi_test{test_to_run}.smt2"
 
-convert_to_smt = f"python3 hashi_convert.py -f \"/mnt/e/Charlotte/Uni/Bachelorarbeit/input/{test_to_run}.txt\""
-run_smt = f"./cvc5 hashi_{test_to_run}.smt2 --incremental"
+convert_to_smt = f"python3 hashi_convert.py -f \"/mnt/e/Charlotte/Uni/Bachelorarbeit/input/test{test_to_run}.txt\""
+run_smt = f"./cvc5 {test_file}"
 
 result = subprocess.run(convert_to_smt, capture_output=True, text=True, shell=True)
 helper = result.stdout.strip()
@@ -23,13 +23,15 @@ while(not connectivity):
     output = result.stdout.strip()
     print(f"cvc5 output:\n{output}")
 
-    adjacency_matrix, bridge_list = output_formatter(output, island_info)
-    print(f"adjacency matrix:\n{np.matrix(adjacency_matrix)}")
-    print(bridge_list)
+    if(output[:5] != "unsat"):
+        adjacency_matrix, bridge_list = output_formatter(output, island_info)
+        print(f"adjacency matrix:\n{np.matrix(adjacency_matrix)}")
+        #print(bridge_list)
 
-    connectivity = verifier(adjacency_matrix)
-    print(f"connected: {connectivity}")
+        connectivity = verifier(adjacency_matrix)
+        print(f"connected: {connectivity}")
 
-    if(not connectivity):
-        add_to_smt_file(bridge_list, test_file)
+        if(not connectivity):
+            add_to_smt_file(bridge_list, test_file)
+    else: break
 
