@@ -331,6 +331,6 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
 
 
     return res
-     
+   
         
 input()

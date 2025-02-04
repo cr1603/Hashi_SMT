@@ -144,3 +144,4 @@ def add_to_smt_file(bridge_list, test_file):
     file.write("(get-model)")
     file.close()
 
+
