@@ -1,4 +1,4 @@
-import numpy as np
+import os
 
 def skip_to(output_help, str):
     while output_help[:(len(str))] != str:
@@ -12,14 +12,25 @@ def save_output_as_island(output_help):
     island = int(output_help[7:i])
     return island
 
-def island2func(output_help, island1, adjacency_matrix):
+def save_bridge_value(output_help):
+    output_help = skip_to(output_help, ")")
+    #print(output_help)
+    i = 2
+    while output_help[i].isnumeric():
+        i += 1
+    value = int(output_help[2:i])
+    return value
+
+def island2func(output_help, island1, adjacency_matrix, bridge_list):
     output_help = skip_to(output_help, "_arg_2")
     island2 = save_output_as_island(output_help)
     #print(f"island2: {island2}")
     adjacency_matrix[island1-1][island2-1] = 1
     adjacency_matrix[island2-1][island1-1] = 1
     output_help = output_help[1:]
-    return adjacency_matrix, output_help
+    value = save_bridge_value(output_help)
+    bridge_list.append((island1, island2, value))
+    return adjacency_matrix, output_help, bridge_list
 
 def island1func(output_help):
     output_help = skip_to(output_help, "_arg_1")
@@ -48,6 +59,7 @@ def output_formatter(output, island_info):
 
     output_help = str(output)
     #print(output_help)
+    bridge_list = []
     if output_help[:3] == "sat":
         output_help = skip_to(output_help, "Line")
         #print(output_help)
@@ -57,7 +69,7 @@ def output_formatter(output, island_info):
                 if output_help[:13] == "ite (= _arg_1":
                     island1, output_help = island1func(output_help)
                 if output_help[:13] == "ite (= _arg_2":
-                    adjacency_matrix, output_help = island2func(output_help, island1, adjacency_matrix)
+                    adjacency_matrix, output_help, bridge_list = island2func(output_help, island1, adjacency_matrix, bridge_list)
             #print(len(output_help))
             #print(adjacency_matrix)
 
@@ -66,9 +78,10 @@ def output_formatter(output, island_info):
 
         #output_help = output_help[1:]
         # print(output_help)
+        
 
 
-    return adjacency_matrix
+    return adjacency_matrix, bridge_list
 
 
 def verifier(adjacency_matrix):
@@ -99,3 +112,35 @@ def verifier(adjacency_matrix):
     #print(all(x == checkerlist for x in adjacency_matrix))
 
     return connectivity_satisfied
+
+def add_to_smt_file(bridge_list, test_file):
+    file = open(test_file, 'r+')
+
+    file.seek(0, os.SEEK_END)
+    pos = file.tell() - 1
+    while pos > 0 and file.read(1) != "\n":
+        pos -= 1
+        file.seek(pos, os.SEEK_SET)
+    if pos > 0:
+        pos -= 1
+        file.seek(pos, os.SEEK_SET)
+        while pos > 0 and file.read(1) != "\n":
+            pos -= 1
+            file.seek(pos, os.SEEK_SET)
+    if pos > 0:
+        file.seek(pos + 1, os.SEEK_SET)
+        file.truncate()
+
+    file.write("\n")
+    file.write("(assert\n")
+    file.write("    (and\n")
+
+    for island1, island2, value in bridge_list:
+        file.write(f"       (not (= (Line {island1} {island2}) {value}))\n")
+    
+    file.write("    )\n)\n\n")
+
+    file.write("(check-sat)\n")
+    file.write("(get-model)")
+    file.close()
+
