@@ -45,7 +45,7 @@ def check_for_ite(output_help):
     return ite_found
 
 def output_formatter(output, island_info):
-    adjacency_matrix = [[0 for _ in range(len(island_info))] for _ in range(len(island_info))]
+    adjacency_matrix = [[0 for _ in range(len(island_info)-1)] for _ in range(len(island_info)-1)] #-1 because of dimension information
 
     for i in range(len(adjacency_matrix)):
         for j in range(len(adjacency_matrix)):
@@ -82,7 +82,7 @@ def output_formatter(output, island_info):
             bridge_value = int(output_help[6:i])
             if bridge_value == 2:
                 bridge_value -= 1
-            adjacency_matrix = [[bridge_value for _ in range(len(island_info))] for _ in range(len(island_info))]
+            adjacency_matrix = [[bridge_value for _ in range(len(island_info)-1)] for _ in range(len(island_info)-1)]
             break                    
 
         else:

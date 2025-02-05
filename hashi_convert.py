@@ -3,14 +3,6 @@ import sys, getopt
 from itertools import chain
 import shutil
 
-def binomialcoefficient(n, k):
-    if (k==0) or (k==n):
-        res = 1
-    else:
-        #print(n, k)
-        res = binomialcoefficient(n-1, k-1) + binomialcoefficient(n-1, k)
-    return res
-
 def input():
     hashi_file = None
 
@@ -27,12 +19,6 @@ def input():
             hashi_file = arg
 
     #print("name of file: " + hashi_file)
-
-    #f = open(hashi_file, "r")
-    # for x in f:
-    #     print (x)
-    #print(int(f.read(2)))
-    #print(f.read())
 
     # extract data from file
     with open(hashi_file, encoding = 'utf8') as f:
@@ -69,19 +55,14 @@ def input():
 
     #filling data with 0's where theres's a "." to work with it under specific circumstainces (skipping checking for 0's during island assignment): stored in new array
     islands_with_0 = []
-    # int_islands_with_0 = []
     for i in range (1, len(data)):
         islands_with_0.append(data[i].replace(".", "0"))
     #print(islands_with_0)
-    # islands_with_0 = list(chain.from_iterable(islands_with_0))
-    # for i in range (len(islands_with_0)):
-    #     int_islands_with_0.append(int(islands_with_0[i]))
-    # print(islands_with_0)
-    # print(int_islands_with_0)
 
     #storing coordinate information as well as island number in one structure
     #print(list(enumerate(data)))
     island_info = []
+    island_info.append((width, height, 0)) #coordinate information to give over to run_project
     data_help = data.copy()
     for x, ele in enumerate(data_help):
         #print("x:" + str(x))
@@ -95,19 +76,17 @@ def input():
                     island_info.append((x,index+1,int(data_help[x][index]))) #indices for the grid start at the top left corner with (1,1)
                 data_help[x] = data_help[x][:index] + '_' + data_help[x][index+1:] #replace the character after I've passed it, so islands with the same value can be recorded independedly
     print(island_info) #print needed to catch as output for further processing
+    island_info = island_info[1:] #take out dimension information for further processing afterwards
             
     hashi_constraints(width, height, island_info, hashi_file, islands_with_0)
 
-    return island_info
+    return width, height, island_info
 
-# def piece(i, j, d, w, h):
-#     res = (w*h) * (i-1) + w * (j-1) + d #assumption: w = h
-#     return res
 
 def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
 
     #d: 0 = empty; 1 = 1 horizontal bridge; 2 = 2 horizontal bridges; 3 = 1 vertical bridge: 4: 2 vertical bridges; 5: island
-    res = []
+    #res = []
     help = hashi_file.split(".")
     #print("file_name_parts: " + str(help))
     file_name_parts = help[0].split("/")
@@ -121,12 +100,6 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
     # print("y_coord: " + str(y_coord))
 
     #each cell can be one of the above defined game pieces, but only one (not islands, as these can be explicitly set)
-    # for i in range(1, w+1):
-    #     for j in range(1, w+1):
-    #         res.append([piece(i, j, d, w, h) for d in range(0, 5)]) 
-    #         for d in range(1, 10):
-    #             for dp in range(d + 1, 10):
-    #                 res.append([-piece(i, j, d, w, h), -piece(i, j, dp, w, h)])
 
     #start island constraints
     file.write("(assert\n")
@@ -149,23 +122,23 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
                 # print("j if: " + str(j))
                 # print("x: " + str(x_coord[0]))
                 # print("y: "+ str(y_coord[0]))
-                res.append((5))
+                #res.append((5))
                 file.write(f"        (= (Island {x_coord[0]} {y_coord[0]}) {value[0]})\n") #generating islands
                 x_coord.pop(0)
                 y_coord.pop(0) #remove coordinates after use
                 value.pop(0)
                 #print("res: " + str(res))
-            elif i == 1 or i == h+1: #upper and lower edge can only be horizontal bridges
-                # print("i else: " + str(i))
-                # print("j else: " + str(j))
-                # print("x: " + str(x_coord[0]))
-                # print("y: "+ str(y_coord[0]))
-                res.append((0,1,2))
-                #print("res: " + str(res))
-            elif j == 1 or j == w+1: # right and left edge can only be vertical bridges
-                res.append((0,3,4))
-            else:
-                res.append((0,1,2,3,4))
+            # elif i == 1 or i == h+1: #upper and lower edge can only be horizontal bridges
+            #     # print("i else: " + str(i))
+            #     # print("j else: " + str(j))
+            #     # print("x: " + str(x_coord[0]))
+            #     # print("y: "+ str(y_coord[0]))
+            #     res.append((0,1,2))
+            #     #print("res: " + str(res))
+            # elif j == 1 or j == w+1: # right and left edge can only be vertical bridges
+            #     res.append((0,3,4))
+            # else:
+            #     res.append((0,1,2,3,4))
 
     file.write("    )\n)\n\n") #island constraints are finished here
 
@@ -196,8 +169,6 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
                     file.write(f"            (= (Line {i+1} {j+1}) {2})\n")
                     file.write("        )\n")
                     bridge_list.append((i+1, j+1))
-                    # adjacency_matrix [i][j] = 1
-                    # adjacency_matrix [j][i] = 1
             if y_coord[i] == y_coord[j]:
                 in_between_y.append(j)
                 if j == min(in_between_y):
@@ -207,8 +178,6 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
                     file.write(f"            (= (Line {i+1} {j+1}) {2})\n")
                     file.write("        )\n")
                     bridge_list.append((i+1, j+1))
-                    # adjacency_matrix [i][j] = 1
-                    # adjacency_matrix [j][i] = 1
         
         in_between_x = []
         in_between_y = []
@@ -238,99 +207,14 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
 
 
     
-    file.write("    )\n)\n\n") #bridge constraints are finished here
-
-    # #connectivity constraint
-    # #print(x_coord)
-    # file.write(f"(assert (= 0 (Number {x_coord[0]} {y_coord[0]})))\n\n")
-
-    # # island1 = [a for a, b in bridge_list]
-    # # island2 = [b for a, b in bridge_list]
-
-    # n = 0
-    # k = 2
-    # num_combination_of_bridges = 0
-    # for island1, island2 in bridge_list:
-    #     if i+1 == island1 or i+1 == island2: #only as many combinations as there are possible bridges connected to island
-    #         n += 1
-    # num_combination_of_bridges = binomialcoefficient(n,k)
-
-    # file.write("(assert\n")
-    # file.write("    (and\n")
-    
-    # for i in range(1, len(island_info)):
-    #     #no connections
-    #     #file.write("(assert\n")
-    #     file.write("        (=>\n")
-    #     file.write("            (and\n")
-    #     for island1, island2 in bridge_list:
-    #         if i+1 == island1 or i+1 == island2:
-    #             #print(f"i: {i}, x_coord: {x_coord}, x_coord[i]: {x_coord[i]}, island_info: {island_info}, island_info[i]: {island_info[i]}, island1: {island1}, island2: {island2}\n")
-    #             file.write(f"              (= (Line {island1} {island2}) 0)\n")
-    #     file.write("            )\n")
-    #     file.write(f"            (= (Number {x_coord[i]} {y_coord[i]}) -1)\n")
-    #     file.write("        )\n")
-    #     #file.write(")\n")
-    #     #connections present
-    #     for count in range(num_combination_of_bridges):
-    #         #print(f" binomialcoefficient: {binomialcoefficient(n, k)}\n")
-    #         #file.write("(assert\n")
-    #         file.write("        (=>\n")
-    #         file.write("            (and")
-    #         for island1, island2 in bridge_list:
-    #             if i+1 == island1 or i+1 == island2:
-    #                 #print(f"i: {i}, bridge_list: {bridge_list}, island1: {island1}, island2: {island2}\n")
-    #                 file.write(f" (> (Line {island1} {island2}) 0)")
-    #         file.write(")\n")
-    #         file.write("            (and\n")
-    #         file.write(f"                (> (Number {x_coord[i]} {y_coord[i]}) 0)\n")
-    #         file.write("                (or\n")
-    #         for island1, island2 in bridge_list:
-    #             if i == island1 or i == island2:
-    #                 file.write(f"                  (> (Number {x_coord[island1-1]} {y_coord[island1-1]}) (Number {x_coord[island2-1]} {y_coord[island2-1]}))\n")
-    #         file.write("                )\n")
-    #         file.write("            )\n")            
-    #         file.write("        )\n")
-    #         #file.write(")\n")
-    # file.write("    )\n")
-    # file.write(")\n")
-    # file.write("\n")
-
-    # #file.write("(assert (forall ((x Int) (y Int)) (> (Number x y) 0)))\n\n")
-
-    # # for island1, island2 in bridge_list:
-    # #     for i in range(len(x_coord)):
-    # #         if i+1 == island1:
-    # #             file.write(f"(assert (=> (> (Line {island1} {island2}) 0) (< (Number {x_coord[island2-1]} {y_coord[island2-1]}) (Number {x_coord[island1-1]} {y_coord[island1-1]}))))\n")
-    # # file.write("\n")
-
-    # # for island1, island2 in bridge_list:
-    # #     for i in range(len(x_coord)):
-    # #         if i+1 == island1:
-    # #             file.write(f"(assert (exists ((k Int)) (and (> (Line {island1} {island2}) 0) (< (Number {x_coord[island2-1]} {y_coord[island2-1]}) (Number {x_coord[island1-1]} {y_coord[island1-1]})))))\n")
-    # # file.write("\n")
-
-
-    # #connectivity constraint take 2
-    # node_0 = 1
-    # #steps = 0
-    # #node_0 is trivially connected to itself in 0 steps
-    # #file.write(f"(assert (= true (Connected_in ({node_0} i))))")
- 
+    file.write("    )\n)\n\n") #bridge constraints are finished here 
 
     #print(res)
     file.write("(check-sat)\n")
     file.write("(get-model)")
     file.close()
 
-    # def valid(cells):
-    #     if(i == 1 or i == h):
-    #         for d in range(3, 5):
-    #             res.append([-v(i, j, d, w, h)])
-
-
-
-    return res
+    #return res
    
         
 input()

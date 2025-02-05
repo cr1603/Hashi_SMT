@@ -1,8 +1,9 @@
 import subprocess
 import numpy as np
 from verifier import *
+from output_solution import *
 
-test_to_run = "5"
+test_to_run = "1"
 test_file = f"hashi_test{test_to_run}.smt2"
 
 convert_to_smt = f"python3 hashi_convert.py -f \"/mnt/e/Charlotte/Uni/Bachelorarbeit/input/test{test_to_run}.txt\""
@@ -35,3 +36,4 @@ while(not connectivity):
             add_to_smt_file(bridge_list, test_file)
     else: break
 
+print(bridge_list)
