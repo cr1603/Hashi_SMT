@@ -1,24 +1,24 @@
 #from cvc5.pythonic import *
-import sys, getopt
+#import sys, getopt
 from itertools import chain
 import shutil
 
-def input():
-    hashi_file = None
+def input(hashi_file):
+    # hashi_file = None
 
-    argv = sys.argv[1:]
-    try:
-        opts, args = getopt.getopt(argv, "f:")
-    except:
-        print("Error")
+    # argv = sys.argv[1:]
+    # try:
+    #     opts, args = getopt.getopt(argv, "f:")
+    # except:
+    #     print("Error")
 
-    # get game file via terminal
-    for opt, arg in opts:
-        if opt in ['-f']:
-            #print("found file")
-            hashi_file = arg
+    # # get game file via terminal
+    # for opt, arg in opts:
+    #     if opt in ['-f']:
+    #         #print("found file")
+    #         hashi_file = arg
 
-    #print("name of file: " + hashi_file)
+    # #print("name of file: " + hashi_file)
 
     # extract data from file
     with open(hashi_file, encoding = 'utf8') as f:
@@ -62,7 +62,7 @@ def input():
     #storing coordinate information as well as island number in one structure
     #print(list(enumerate(data)))
     island_info = []
-    island_info.append((width, height, 0)) #coordinate information to give over to run_project
+    #island_info.append((width, height, 0)) #coordinate information to give over to run_project
     data_help = data.copy()
     for x, ele in enumerate(data_help):
         #print("x:" + str(x))
@@ -76,11 +76,11 @@ def input():
                     island_info.append((x,index+1,int(data_help[x][index]))) #indices for the grid start at the top left corner with (1,1)
                 data_help[x] = data_help[x][:index] + '_' + data_help[x][index+1:] #replace the character after I've passed it, so islands with the same value can be recorded independedly
     print(island_info) #print needed to catch as output for further processing
-    island_info = island_info[1:] #take out dimension information for further processing afterwards
+    #island_info = island_info[1:] #take out dimension information for further processing afterwards
             
-    hashi_constraints(width, height, island_info, hashi_file, islands_with_0)
+    bridge_list = hashi_constraints(width, height, island_info, hashi_file, islands_with_0)
 
-    return width, height, island_info
+    return width, height, island_info, bridge_list
 
 
 def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
@@ -91,7 +91,7 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
     #print("file_name_parts: " + str(help))
     file_name_parts = help[0].split("/")
     #print("file_name_parts: " + str(file_name_parts))
-    file = open(shutil.copyfile('hashi.smt2', 'hashi_' + file_name_parts[7] + '.smt2'), 'a')
+    file = open(shutil.copyfile('hashi.smt2', 'hashi_' + file_name_parts[1] + '.smt2'), 'a')
     x_coord = [x for x, y, v in island_info]
     y_coord = [y for x, y, v in island_info]
     value   = [v for x, y, v in island_info]
@@ -214,7 +214,7 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
     file.write("(get-model)")
     file.close()
 
-    #return res
+    return bridge_list
    
         
-input()
+#input(hashi_file)
