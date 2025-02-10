@@ -4,6 +4,7 @@ from itertools import chain
 import shutil
 
 def input(hashi_file):
+    #moved to other file to enable data transfer
     # hashi_file = None
 
     # argv = sys.argv[1:]
@@ -200,10 +201,10 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
             if x_coord[islandx1-1] == x_coord[islandx2-1]:
                 if ((x_coord[islandx1-1] > x_coord[islandy1-1]) and (x_coord[islandx1-1] < x_coord[islandy2-1])) or ((x_coord[islandx1-1] < x_coord[islandy1-1]) and (x_coord[islandx1-1] > x_coord[islandy2-1])):
                     if ((y_coord[islandy1-1] > y_coord[islandx1-1]) and (y_coord[islandy1-1] < y_coord[islandx2-1])) or ((y_coord[islandy1-1] < y_coord[islandx1-1]) and (y_coord[islandy1-1] > y_coord[islandx2-1])):
-                        file.write("       (or\n")
+                        file.write("        (or\n")
                         file.write(f"           (= 0 (Line {islandx1} {islandx2}))\n")
                         file.write(f"           (= 0 (Line {islandy1} {islandy2}))\n")
-                        file.write("        )\n")
+                        file.write("         )\n")
 
 
     

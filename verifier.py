@@ -24,7 +24,7 @@ def save_bridge_value(output_help):
 def island2func(output_help, island1, adjacency_matrix, bridge_list):
     output_help = skip_to(output_help, "_arg_2")
     island2 = save_output_as_island(output_help)
-    print(f"island2: {island2}")
+    #print(f"island2: {island2}")
     adjacency_matrix[island1-1][island2-1] = 1
     adjacency_matrix[island2-1][island1-1] = 1
     output_help = output_help[1:]
@@ -35,7 +35,7 @@ def island2func(output_help, island1, adjacency_matrix, bridge_list):
 def island1func(output_help):
     output_help = skip_to(output_help, "_arg_1")
     island1 = save_output_as_island(output_help)
-    print(f"island1: {island1}")
+    #print(f"island1: {island1}")
     output_help = output_help[1:]
     return island1, output_help
 
@@ -63,6 +63,7 @@ def output_formatter(output, island_info):
     output_help = str(output)
     #print(output_help)
     bridge_list = []
+    bridge_value = 0
     #if output_help[:3] == "sat":
     output_help = skip_to(output_help, "Line")
     #print(output_help)
@@ -83,7 +84,6 @@ def output_formatter(output, island_info):
             while output_help[i].isnumeric():
                 i += 1
             bridge_value = int(output_help[6:i])
-            #for i in range (len(island_info)):
 
             if bridge_value == 2:
                 bridge_value -= 1
@@ -98,7 +98,7 @@ def output_formatter(output, island_info):
         
 
 
-    return adjacency_matrix, bridge_list
+    return adjacency_matrix, bridge_list, bridge_value
 
 
 def verifier(adjacency_matrix):

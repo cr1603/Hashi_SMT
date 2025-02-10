@@ -4,11 +4,11 @@ from hashi_convert import *
 from verifier import *
 from output_solution import *
 
-test_to_run = "6"
+test_to_run = "1"
 test_file = f"hashi_test{test_to_run}.smt2"
 
 open_test_file = f"python3 read_file.py -f \"input/test{test_to_run}.txt\""
-convert_to_smt = f"python3 hashi_convert.py -f \"/mnt/e/Charlotte/Uni/Bachelorarbeit/input/test{test_to_run}.txt\""
+#convert_to_smt = f"python3 hashi_convert.py -f \"/mnt/e/Charlotte/Uni/Bachelorarbeit/input/test{test_to_run}.txt\""
 run_smt = f"./cvc5 {test_file}"
 
 result = subprocess.run(open_test_file, capture_output=True, text=True, shell=True)
@@ -34,7 +34,7 @@ while(not connectivity):
     print(f"cvc5 output:\n{output}")
 
     if(output[:5] != "unsat"):
-        adjacency_matrix, bridge_list_smt = output_formatter(output, island_info)
+        adjacency_matrix, bridge_list_smt, bridge_value = output_formatter(output, island_info)
         print(f"adjacency matrix:\n{np.matrix(adjacency_matrix)}")
         #print(bridge_list)
 
@@ -46,3 +46,12 @@ while(not connectivity):
     else: break
 
 print(bridge_list)
+print(bridge_list_smt)
+print(bridge_value)
+
+if len(bridge_list_smt) == 0:
+    bridge_list_for_output = bridge_list.copy()
+else:
+    bridge_list_for_output = bridge_list_smt.copy()
+
+output_solution(width, height, island_info, bridge_list_for_output, bridge_value)
