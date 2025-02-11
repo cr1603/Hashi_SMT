@@ -4,7 +4,7 @@ from hashi_convert import *
 from verifier import *
 from output_solution import *
 
-test_to_run = "1"
+test_to_run = "6"
 test_file = f"hashi_test{test_to_run}.smt2"
 
 open_test_file = f"python3 read_file.py -f \"input/test{test_to_run}.txt\""
