@@ -76,7 +76,7 @@ def input(hashi_file):
                 if(data_help[x][index] != '.'):
                     island_info.append((x,index+1,int(data_help[x][index]))) #indices for the grid start at the top left corner with (1,1)
                 data_help[x] = data_help[x][:index] + '_' + data_help[x][index+1:] #replace the character after I've passed it, so islands with the same value can be recorded independedly
-    print(island_info) #print needed to catch as output for further processing
+    #print(island_info) #print needed to catch as output for further processing
     #island_info = island_info[1:] #take out dimension information for further processing afterwards
             
     bridge_list = hashi_constraints(width, height, island_info, hashi_file, islands_with_0)

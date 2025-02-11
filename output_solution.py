@@ -6,11 +6,11 @@ def output_solution(width, height, island_info, bridge_list_unsorted, bridge_val
     x_coord = [x for x, y, v in island_info]
     y_coord = [y for x, y, v in island_info]
     value   = [v for x, y, v in island_info]
-    print(x_coord)
-    print(y_coord)
+    # print(x_coord)
+    # print(y_coord)
 
     bridge_list = sorted(bridge_list_unsorted, key = lambda x: (x[0], x[1]))
-    print(bridge_list)
+    #print(bridge_list)
 
     if bridge_value == 0:
         island1 = [i1 for i1, i2, bv in bridge_list]
@@ -23,8 +23,6 @@ def output_solution(width, height, island_info, bridge_list_unsorted, bridge_val
 
     for i in range(len(x_coord)):
         output[x_coord[i]-1][y_coord[i]-1] = value[i]
-
-    count = 0
 
     #horizontal bridges
     for i in range(height):

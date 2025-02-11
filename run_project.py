@@ -4,7 +4,7 @@ from hashi_convert import *
 from verifier import *
 from output_solution import *
 
-test_to_run = "19"
+test_to_run = "22"
 test_file = f"hashi_test{test_to_run}.smt2"
 
 open_test_file = f"python3 read_file.py -f \"input/test{test_to_run}.txt\""
@@ -45,13 +45,14 @@ while(not connectivity):
             add_to_smt_file(bridge_list_smt, test_file)
     else: break
 
-print(bridge_list)
-print(bridge_list_smt)
-print(bridge_value)
+# print(bridge_list)
+# print(bridge_list_smt)
+# print(bridge_value)
 
-if len(bridge_list_smt) == 0:
-    bridge_list_for_output = bridge_list.copy()
-else:
-    bridge_list_for_output = bridge_list_smt.copy()
+if(output[:5] != "unsat"):
+    if len(bridge_list_smt) == 0:
+        bridge_list_for_output = bridge_list.copy()
+    else:
+        bridge_list_for_output = bridge_list_smt.copy()
 
-output_solution(width, height, island_info, bridge_list_for_output, bridge_value)
+    output_solution(width, height, island_info, bridge_list_for_output, bridge_value)
