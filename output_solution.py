@@ -76,5 +76,10 @@ def output_solution(width, height, island_info, bridge_list_unsorted, bridge_val
                                     #print(np.matrix(output))
     
     print("solution:")
-    print(np.matrix(output))
-    #print(*output, sep= "\n")
+    #print(np.matrix(output))
+
+    ascii_output = []
+    for i in range(height):
+        #print(output[i])
+        ascii_output.append(" ".join(map(str, output[i])))
+    print(*ascii_output, sep="\n")
