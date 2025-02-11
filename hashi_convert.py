@@ -3,7 +3,7 @@
 from itertools import chain
 import shutil
 
-def input(hashi_file):
+def hashi_input(hashi_file):
     #moved to other file to enable data transfer
     # hashi_file = None
 
