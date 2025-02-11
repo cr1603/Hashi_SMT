@@ -6,6 +6,8 @@ def output_solution(width, height, island_info, bridge_list_unsorted, bridge_val
     x_coord = [x for x, y, v in island_info]
     y_coord = [y for x, y, v in island_info]
     value   = [v for x, y, v in island_info]
+    print(x_coord)
+    print(y_coord)
 
     bridge_list = sorted(bridge_list_unsorted, key = lambda x: (x[0], x[1]))
     print(bridge_list)
@@ -23,54 +25,68 @@ def output_solution(width, height, island_info, bridge_list_unsorted, bridge_val
         output[x_coord[i]-1][y_coord[i]-1] = value[i]
 
     count = 0
-
+    
+    #horizontal bridges
     for i in range(height):
         for j in range(width):
             if output[i][j] == ".":
                 for a in range(len(island1)):
-                    if (x_coord[island1[a]-1]-1 == i) and (x_coord[island1[a]-1] == x_coord[island2[a]-1]): #horizontal bridges
+                    if (x_coord[island1[a]-1]-1 == i) and (x_coord[island1[a]-1] == x_coord[island2[a]-1]):
                         while j>y_coord[island1[a]-1]-1 and j<y_coord[island2[a]-1]-1:
-                            print(a)
-                            print(j)
-                            print(y_coord[island2[a]-1]-1)
+                            # print(a)
+                            # print(j)
+                            # print(y_coord[island2[a]-1]-1)
                             if bridge_value == 0:
                                 if bridge_values[a] == 1:
                                     output[i][j] = "-"
-                                    print(np.matrix(output))
+                                    #print(np.matrix(output))
                                 elif bridge_values[a] == 2:
                                     output[i][j] = "="
-                                    print(np.matrix(output))
+                                    #print(np.matrix(output))
                             else:
                                 if bridge_value == 1:
                                     output[i][j] = "-"
-                                    print(np.matrix(output))
+                                    #print(np.matrix(output))
                                 elif bridge_value == 2:
                                     output[i][j] = "="
-                                    print(np.matrix(output))
+                                    #print(np.matrix(output))
                             j += 1
-                    elif (y_coord[island1[a]-1]-1 == j) and (y_coord[island1[a]-1] == y_coord[island2[a]-1]): #vertical bridges
-                        while i>x_coord[island1[a]-1]-1 and i<x_coord[island2[a]-1]-1:
-                            count = 0
-                            print(a)
-                            print(i)
-                            print(x_coord[island2[a]-1]-1)
-                            if bridge_value == 0:
-                                if bridge_values[a] == 1:
-                                    output[i][j] = "|"
-                                    print(np.matrix(output))
-                                elif bridge_values[a] == 2:
-                                    output[i][j] = "$"
-                                    print(np.matrix(output))
-                            else:
-                                if bridge_value == 1:
-                                    output[i][j] = "|"
-                                    print(np.matrix(output))
-                                elif bridge_value == 2:
-                                    output[i][j] = "$"
-                                    print(np.matrix(output))
-                            i += 1
-                            count += 1
-                        i -= count
+                    
+    for i in range(height):
+        for j in range(width):
+            if output[i][j] == ".":
+                for a in range(len(island1)):
+                    print(f"j before if: {j}")
+                    if (x_coord[island1[a]-1]-1 < i):
+                        if (y_coord[island1[a]-1]-1 == j) and (y_coord[island1[a]-1] == y_coord[island2[a]-1]): #vertical bridges
+                            print(f"a: {a}")
+                            print(f"i: {i}")
+                            print(f"j : {j}")
+                            print(f"yisland1: {y_coord[island1[a]-1]}")
+                            print(f"yisland2: {y_coord[island2[a]-1]}")
+                            while i<x_coord[island2[a]-1]-1:
+                                count = 0
+                                print(a)
+                                print(i)
+                                print(x_coord[island2[a]-1]-1)
+                                if bridge_value == 0:
+                                    if bridge_values[a] == 1:
+                                        output[i][j] = "|"
+                                        print(np.matrix(output))
+                                    elif bridge_values[a] == 2:
+                                        output[i][j] = "$"
+                                        print(np.matrix(output))
+                                else:
+                                    if bridge_value == 1:
+                                        output[i][j] = "|"
+                                        print(np.matrix(output))
+                                    elif bridge_value == 2:
+                                        output[i][j] = "$"
+                                        print(np.matrix(output))
+                                i += 1
+                                count += 1
+                            i -= count
     
     print("solution:")
     print(np.matrix(output))
+    #print(*output, sep= "\n")
