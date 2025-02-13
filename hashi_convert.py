@@ -92,7 +92,10 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
     #print("file_name_parts: " + str(help))
     file_name_parts = help[0].split("/")
     #print("file_name_parts: " + str(file_name_parts))
-    file = open(shutil.copyfile('hashi.smt2', 'hashi_' + file_name_parts[1] + '.smt2'), 'a')
+    if len(file_name_parts) == 1:
+        file = open(shutil.copyfile('hashi.smt2', 'hashi_' + file_name_parts[0] + '.smt2'), 'a') #for generated puzzles
+    else:
+        file = open(shutil.copyfile('hashi.smt2', 'hashi_' + file_name_parts[1] + '.smt2'), 'a')
     x_coord = [x for x, y, v in island_info]
     y_coord = [y for x, y, v in island_info]
     value   = [v for x, y, v in island_info]
@@ -186,7 +189,7 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
     #number of bridges connected to an island equals value of island
     #print(bridge_list)
     for i in range(len(island_info)):
-        file.write(f"        (= (Island {x_coord[i]} {y_coord[i]}) (+ 0")
+        file.write(f"        (= (Island {x_coord[i]} {y_coord[i]}) (+ 0 0")
         for island1, island2 in bridge_list:
             if i+1 == island1 or i+1 == island2:
                 file.write(f" (Line {island1} {island2})")

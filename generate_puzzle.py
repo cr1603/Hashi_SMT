@@ -15,6 +15,5 @@ def generate_puzzle(height, width):
             else:
                 puzzle.write(random.choice(cell_options))
         puzzle.write("\n")
-
-
-generate_puzzle(5,5)
+    
+    return puzzle.name
