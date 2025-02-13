@@ -3,6 +3,7 @@ import numpy as np
 from hashi_convert import *
 from verifier import *
 from output_solution import *
+from generate_puzzle import *
 
 solve_or_generate = input("Solve (s) puzzle or Generate (g) puzzle?\n")
 
