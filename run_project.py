@@ -104,8 +104,7 @@ if solve_or_generate == "s":
 elif solve_or_generate == "g":
     height = int(input("height of puzzle: "))
     width = int(input("width of puzzle: "))
-    #print(f"Generate Puzzle")
-     
+    #print(f"Generate Puzzle")     
 
     puzzle_file, island_info, bridge_list = generate(height, width)
 
@@ -129,10 +128,12 @@ elif solve_or_generate == "g":
 
     #sys.stdout = _stdout
 
+    #puzzle_file = "generated_puzzle.txt"
+
     with open(puzzle_file, 'r') as file:
-        file_lines = file.readLines()
+        file_lines = [line.strip('\n') for line in file.readlines()]
         for line in file_lines:
-            print(line.strip())
+            print(line)
 
 
 
