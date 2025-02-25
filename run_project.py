@@ -61,38 +61,16 @@ if solve_or_generate == "s":
 
     width, height, island_info, bridge_list = hashi_input(hashi_file)
 
-    # # result = subprocess.run(convert_to_smt, capture_output=True, text=True, shell=True)
-    # # helper = result.stdout.strip()
-    # # island_info = eval(helper) #parse representation of list (string) into actual array
+    # result = subprocess.run(convert_to_smt, capture_output=True, text=True, shell=True)
+    # helper = result.stdout.strip()
+    # island_info = eval(helper) #parse representation of list (string) into actual array
 
-    # # print(f"island_info: {island_info}")
-    # # print(len(island_info))
-    # # print(island_info[0])
+    # print(f"island_info: {island_info}")
+    # print(len(island_info))
+    # print(island_info[0])
 
     output, bridge_list_smt, bridge_value = solve_puzzle(run_smt, island_info)
-    # connectivity = False
-
-    # while(not connectivity):
-    #     result = subprocess.run(run_smt, capture_output=True, text=True, shell=True)
-    #     output = result.stdout.strip()
-    #     print(f"cvc5 output:\n{output}")
-
-    #     if(output[:5] != "unsat"):
-    #         adjacency_matrix, bridge_list_smt, bridge_value = output_formatter(output, island_info)
-    #         print(f"adjacency matrix:\n{np.matrix(adjacency_matrix)}")
-    #         #print(bridge_list)
-
-    #         connectivity = verifier(adjacency_matrix)
-    #         print(f"connected: {connectivity}")
-
-    #         if(not connectivity):
-    #             add_to_smt_file(bridge_list_smt, test_file)
-    #     else: break
-
-    # # print(bridge_list)
-    # # print(bridge_list_smt)
-    # # print(bridge_value)
-
+   
     if(output[:5] != "unsat"):
         if len(bridge_list_smt) == 0:
             bridge_list_for_output = bridge_list.copy()
@@ -134,7 +112,3 @@ elif solve_or_generate == "g":
         file_lines = [line.strip('\n') for line in file.readlines()]
         for line in file_lines:
             print(line)
-
-
-
-
