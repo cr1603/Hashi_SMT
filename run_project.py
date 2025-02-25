@@ -12,24 +12,30 @@ class DevNull(object):
 
 def solve_puzzle(run_smt, island_info):
     connectivity = False
+    err = 0
 
-    while(not connectivity):
-        result = subprocess.run(run_smt, capture_output=True, text=True, shell=True)
-        output = result.stdout.strip()
-        print(f"cvc5 output:\n{output}")
+    if island_info == []:
+        print("empty_puzzle!")
+        err = 1
+        return err, "", [], 0
+    else:
+        while(not connectivity):
+            result = subprocess.run(run_smt, capture_output=True, text=True, shell=True)
+            output = result.stdout.strip()
+            print(f"cvc5 output:\n{output}")
 
-        if(output[:5] != "unsat"):
-            adjacency_matrix, bridge_list_smt, bridge_value = output_formatter(output, island_info)
-            print(f"adjacency matrix:\n{np.matrix(adjacency_matrix)}")
-            #print(bridge_list)
+            if(output[:5] != "unsat"):
+                adjacency_matrix, bridge_list_smt, bridge_value = output_formatter(output, island_info)
+                print(f"adjacency matrix:\n{np.matrix(adjacency_matrix)}")
+                #print(bridge_list)
 
-            connectivity = verifier(adjacency_matrix)
-            print(f"connected: {connectivity}")
+                connectivity = verifier(adjacency_matrix)
+                print(f"connected: {connectivity}")
 
-            if(not connectivity):
-                add_to_smt_file(bridge_list_smt, test_file)
-        else: break
-    return output, bridge_list_smt, bridge_value
+                if(not connectivity):
+                    add_to_smt_file(bridge_list_smt, test_file)
+            else: break
+        return err, output, bridge_list_smt, bridge_value
 
 def generate(height, width):
     puzzle_file = generate_puzzle(height, width)
@@ -49,8 +55,10 @@ solve_or_generate = input("Solve (s) puzzle or Generate (g) puzzle?\n")
 if solve_or_generate == "s":
     test_to_run = "1"
     test_file = f"hashi_test{test_to_run}.smt2"
+    #test_file = f"hashi_generated_puzzle.smt2"
 
     open_test_file = f"python3 read_file.py -f \"input/test{test_to_run}.txt\""
+    #open_test_file = f"python3 read_file.py -f \"generated_puzzle.txt\""
     #convert_to_smt = f"python3 hashi_convert.py -f \"/mnt/e/Charlotte/Uni/Bachelorarbeit/input/test{test_to_run}.txt\""
     run_smt = f"./cvc5 {test_file}"
 
@@ -69,22 +77,31 @@ if solve_or_generate == "s":
     # print(len(island_info))
     # print(island_info[0])
 
-    output, bridge_list_smt, bridge_value = solve_puzzle(run_smt, island_info)
+    err, output, bridge_list_smt, bridge_value = solve_puzzle(run_smt, island_info)
    
-    if(output[:5] != "unsat"):
-        if len(bridge_list_smt) == 0:
-            bridge_list_for_output = bridge_list.copy()
-        else:
-            bridge_list_for_output = bridge_list_smt.copy()
+    if err == 0:
+        if(output[:5] != "unsat"):
+            if len(bridge_list_smt) == 0:
+                bridge_list_for_output = bridge_list.copy()
+            else:
+                bridge_list_for_output = bridge_list_smt.copy()
 
-        output_solution(width, height, island_info, bridge_list_for_output, bridge_value)
-    
+            output_solution(width, height, island_info, bridge_list_for_output, bridge_value)
+        
 elif solve_or_generate == "g":
     height = int(input("height of puzzle: "))
     width = int(input("width of puzzle: "))
     #print(f"Generate Puzzle")     
 
     puzzle_file, island_info, bridge_list = generate(height, width)
+
+    # ##for testing purposes##
+    # open_puzzle_file = f"python3 read_file.py -f \"generated_puzzle.txt\""
+
+    # result = subprocess.run(open_puzzle_file, capture_output=True, text=True, shell=True)
+    # puzzle_file = result.stdout.strip()
+
+    # _, _, island_info, bridge_list = hashi_input(puzzle_file)
 
     puzzle_file_name = puzzle_file.split(".")
 
@@ -97,7 +114,7 @@ elif solve_or_generate == "g":
     # _stdout = sys.stdout
     # sys.stdout = DevNull()
     
-    while(output[:5] == "unsat"):
+    while(output[:5] == "unsat" or island_info == []):
         puzzle_file, island_info, bridge_list = generate(height, width)
         result = subprocess.run(run_smt, capture_output=True, text=True, shell=True)
         output = result.stdout.strip()
