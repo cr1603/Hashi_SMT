@@ -30,7 +30,7 @@ def island2func(output_help, island1, adjacency_matrix, bridge_list):
     output_help = output_help[1:]
     value = save_bridge_value(output_help)
     bridge_list.append((island1, island2, value))
-    return adjacency_matrix, output_help, bridge_list
+    return island1, island2, adjacency_matrix, output_help, bridge_list
 
 def island1func(output_help):
     output_help = skip_to(output_help, "_arg_1")
@@ -45,7 +45,7 @@ def check_for_ite(output_help):
         ite_found = True
     return ite_found
 
-def output_formatter(output, island_info):
+def output_formatter(output, island_info, bridge_list_input):
     #island_info = island_info[1:] #-1 because of dimension information
     adjacency_matrix = [[0 for _ in range(len(island_info))] for _ in range(len(island_info))]
     #print(len(adjacency_matrix))
@@ -73,7 +73,22 @@ def output_formatter(output, island_info):
             if output_help[:13] == "ite (= _arg_1":
                 island1, output_help = island1func(output_help)
             if output_help[:13] == "ite (= _arg_2":
-                adjacency_matrix, output_help, bridge_list = island2func(output_help, island1, adjacency_matrix, bridge_list)
+                island1, island2, adjacency_matrix, output_help, bridge_list = island2func(output_help, island1, adjacency_matrix, bridge_list)
+                output_help = skip_to(output_help, ")")
+                #print(output_help)
+                if output_help[4] != "0":
+                    # print(output_help)
+                    # print(bridge_list_input)
+                    # print(island1, island2)
+                    for i1, i2 in bridge_list_input:
+                        if (i1 == island1 and i2 != island2) or (i1 == island2 and i2 != island1):
+                            print(i1, i2)
+                            adjacency_matrix[i1-1][i2-1] = 1
+                            adjacency_matrix[i2-1][i1-1] = 1
+                            value = int(output_help[4])
+                            bridge_list.append((i1, i2, value))
+                            #print(value)
+                    
         #print(len(output_help))
         #print(adjacency_matrix)
 

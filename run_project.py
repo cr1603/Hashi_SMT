@@ -10,7 +10,7 @@ class DevNull(object):
     def write(self, arg):
         pass
 
-def solve_puzzle(run_smt, island_info):
+def solve_puzzle(run_smt, island_info, bridge_list):
     connectivity = False
     err = 0
 
@@ -25,7 +25,7 @@ def solve_puzzle(run_smt, island_info):
             print(f"cvc5 output:\n{output}")
 
             if(output[:5] != "unsat"):
-                adjacency_matrix, bridge_list_smt, bridge_value = output_formatter(output, island_info)
+                adjacency_matrix, bridge_list_smt, bridge_value = output_formatter(output, island_info, bridge_list)
                 print(f"adjacency matrix:\n{np.matrix(adjacency_matrix)}")
                 #print(bridge_list)
 
@@ -77,7 +77,7 @@ if solve_or_generate == "s":
     # print(len(island_info))
     # print(island_info[0])
 
-    err, output, bridge_list_smt, bridge_value = solve_puzzle(run_smt, island_info)
+    err, output, bridge_list_smt, bridge_value = solve_puzzle(run_smt, island_info, bridge_list)
    
     if err == 0:
         if(output[:5] != "unsat"):
@@ -93,15 +93,15 @@ elif solve_or_generate == "g":
     width = int(input("width of puzzle: "))
     #print(f"Generate Puzzle")     
 
-    puzzle_file, island_info, bridge_list = generate(height, width)
+    #puzzle_file, island_info, bridge_list = generate(height, width)
 
-    # ##for testing purposes##
-    # open_puzzle_file = f"python3 read_file.py -f \"generated_puzzle.txt\""
+    ##for testing purposes##
+    open_puzzle_file = f"python3 read_file.py -f \"generated_puzzle.txt\""
 
-    # result = subprocess.run(open_puzzle_file, capture_output=True, text=True, shell=True)
-    # puzzle_file = result.stdout.strip()
+    result = subprocess.run(open_puzzle_file, capture_output=True, text=True, shell=True)
+    puzzle_file = result.stdout.strip()
 
-    # _, _, island_info, bridge_list = hashi_input(puzzle_file)
+    _, _, island_info, bridge_list = hashi_input(puzzle_file)
 
     puzzle_file_name = puzzle_file.split(".")
 
@@ -113,13 +113,14 @@ elif solve_or_generate == "g":
 
     # _stdout = sys.stdout
     # sys.stdout = DevNull()
-    
-    while(output[:5] == "unsat" or island_info == []):
-        puzzle_file, island_info, bridge_list = generate(height, width)
-        result = subprocess.run(run_smt, capture_output=True, text=True, shell=True)
-        output = result.stdout.strip()
-    
-    solve_puzzle(run_smt, island_info)
+
+    while(output[:5] == "unsat"):    
+        while(output[:5] == "unsat" or island_info == []):
+            puzzle_file, island_info, bridge_list = generate(height, width)
+            result = subprocess.run(run_smt, capture_output=True, text=True, shell=True)
+            output = result.stdout.strip()
+        
+        solve_puzzle(run_smt, island_info, bridge_list)
 
     #sys.stdout = _stdout
 
