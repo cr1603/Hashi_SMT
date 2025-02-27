@@ -4,7 +4,7 @@ from itertools import chain
 import shutil
 
 def hashi_input(hashi_file):
-    #moved to other file to enable data transfer
+    ## moved to other file to enable data transfer ##
     # hashi_file = None
 
     # argv = sys.argv[1:]
@@ -21,19 +21,19 @@ def hashi_input(hashi_file):
 
     # #print("name of file: " + hashi_file)
 
-    # extract data from file
+    ## extract data from file ##
     with open(hashi_file, encoding = 'utf8') as f:
         data = [line.strip('\n') for line in f.readlines()]
     #print (data)
 
-    # first line is the dimensions of the game board
+    ## first line is the dimensions of the game board ##
     grid_wxh = data[0].split(' ')
     #print(grid_wxh)
 
     height = int(grid_wxh[0])
     width = int(grid_wxh[1])
 
-    # extract information about the islands from the rest of the file: removing "." and subsequent empty entries
+    ## extract information about the islands from the rest of the file: removing "." and subsequent empty entries ##
     islands = []
     for i in range(1, len(data)):
         islands.append(data[i].split('.'))
@@ -45,7 +45,7 @@ def hashi_input(hashi_file):
     #print(type(islands))
     #print(islands)
 
-    #flattening islands array and turning it into an integer array
+    ## flattening islands array and turning it into an integer array ##
     int_islands = []
     flat_islands = list(chain.from_iterable(islands))
     #print(flat_islands)
@@ -54,16 +54,16 @@ def hashi_input(hashi_file):
     #print(int_islands)
     #print(data)
 
-    #filling data with 0's where theres's a "." to work with it under specific circumstainces (skipping checking for 0's during island assignment): stored in new array
+    ## filling data with 0's where theres's a "." to work with it under specific circumstances (skipping checking for 0's during island assignment): stored in new array ##
     islands_with_0 = []
     for i in range (1, len(data)):
         islands_with_0.append(data[i].replace(".", "0"))
     #print(islands_with_0)
 
-    #storing coordinate information as well as island number in one structure
+    ## storing coordinate information as well as island number in one structure ##
     #print(list(enumerate(data)))
     island_info = []
-    #island_info.append((width, height, 0)) #coordinate information to give over to run_project
+    #island_info.append((width, height, 0)) ## coordinate information to give over to run_project ## -> solved differently, not used
     data_help = data.copy()
     for x, ele in enumerate(data_help):
         #print("x:" + str(x))
@@ -74,10 +74,10 @@ def hashi_input(hashi_file):
                 index = data_help[x].find(y)
                 #print("index: " + str(index))
                 if(data_help[x][index] != '.'):
-                    island_info.append((x,index+1,int(data_help[x][index]))) #indices for the grid start at the top left corner with (1,1)
-                data_help[x] = data_help[x][:index] + '_' + data_help[x][index+1:] #replace the character after I've passed it, so islands with the same value can be recorded independedly
-    #print(island_info) #print needed to catch as output for further processing
-    #island_info = island_info[1:] #take out dimension information for further processing afterwards
+                    island_info.append((x,index+1,int(data_help[x][index]))) ## indices for the grid start at the top left corner with (1,1) ##
+                data_help[x] = data_help[x][:index] + '_' + data_help[x][index+1:] ## replace the character after it's passed, so islands with the same value can be recorded independedly ##
+    #print(island_info) ## print needed to catch as output for further processing ## -> solved differently, not used
+    #island_info = island_info[1:] ## take out dimension information for further processing afterwards ## -> solved differently, not used
             
     bridge_list = hashi_constraints(width, height, island_info, hashi_file, islands_with_0)
 
@@ -85,9 +85,13 @@ def hashi_input(hashi_file):
 
 
 def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
-
-    #d: 0 = empty; 1 = 1 horizontal bridge; 2 = 2 horizontal bridges; 3 = 1 vertical bridge: 4: 2 vertical bridges; 5: island
+    ##not used##
+    #d: 0 = empty; 1 = 1 horizontal bridge; 2 = 2 horizontal bridges; 3 = 1 vertical bridge: 4: 2 vertical bridges; 5: island ##not used
+    #each cell can be one of the above defined game pieces, but only one (not islands, as these can be explicitly set)
     #res = []
+    ###########
+
+    ## hashi.smt2 is the template file. Each hashi input file will generate a .smt2 file based on this template: the file name hashi.smt2 is appended with the respective input file's name ##
     help = hashi_file.split(".")
     #print("file_name_parts: " + str(help))
     file_name_parts = help[0].split("/")
@@ -96,6 +100,8 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
         file = open(shutil.copyfile('hashi.smt2', 'hashi_' + file_name_parts[0] + '.smt2'), 'a') #for generated puzzles
     else:
         file = open(shutil.copyfile('hashi.smt2', 'hashi_' + file_name_parts[1] + '.smt2'), 'a')
+
+    ## storing coordinate information and island values in seperate arrays ##
     x_coord = [x for x, y, v in island_info]
     y_coord = [y for x, y, v in island_info]
     value   = [v for x, y, v in island_info]
@@ -103,16 +109,15 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
     # print("x_coord: " + str(x_coord))
     # print("y_coord: " + str(y_coord))
 
-    #each cell can be one of the above defined game pieces, but only one (not islands, as these can be explicitly set)
 
-    #start island constraints
+    ## start island constraints ##
     file.write("(assert\n")
     file.write("    (and\n")
 
     # print("width: " + str(w))
     # print("height: " + str(h))
 
-    #set each island piece and all possible pieces for the rest of the cells per definition of d
+    ## set each island piece (and all possible pieces for the rest of the cells per definition of d) -> not used ##
     for i in range(1, h+1):    
         #print("i outside: " + str(i))
         for j in range(1,w+1):
@@ -126,12 +131,18 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
                 # print("j if: " + str(j))
                 # print("x: " + str(x_coord[0]))
                 # print("y: "+ str(y_coord[0]))
+
+                ##not used##
                 #res.append((5))
+                ###########
+
                 file.write(f"        (= (Island {x_coord[0]} {y_coord[0]}) {value[0]})\n") #generating islands
                 x_coord.pop(0)
-                y_coord.pop(0) #remove coordinates after use
+                y_coord.pop(0) ## remove coordinates after use ##
                 value.pop(0)
                 #print("res: " + str(res))
+
+            ##not used##
             # elif i == 1 or i == h+1: #upper and lower edge can only be horizontal bridges
             #     # print("i else: " + str(i))
             #     # print("j else: " + str(j))
@@ -143,11 +154,13 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
             #     res.append((0,3,4))
             # else:
             #     res.append((0,1,2,3,4))
+            ###########
 
-    file.write("    )\n)\n\n") #island constraints are finished here
+    file.write("    )\n)\n\n")
+    ## island constraints are finished here ##
 
 
-    #start bridge constraints
+    ## start bridge constraints ##
     file.write("(assert\n")
     file.write("    (and\n")
 
@@ -161,7 +174,7 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
     bridge_list = []
 
 
-    #single or double bridges between islands
+    ## single or double bridges between islands ##
     for i in range(len(island_info)):
         for j in range(i+1, len(island_info)):
             if x_coord[i] == x_coord[j]:
@@ -186,7 +199,7 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
         in_between_x = []
         in_between_y = []
 
-    #number of bridges connected to an island equals value of island
+    ## number of bridges connected to an island equals value of island ##
     #print(bridge_list)
     for i in range(len(island_info)):
         file.write(f"        (= (Island {x_coord[i]} {y_coord[i]}) (+ 0 0")
@@ -196,9 +209,9 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
             #print(island1, island2)
         file.write("))\n")
 
-    #bridges cannot cross each other
-    #check horizontal connections for crossing vertical connections
-    #only check tow pairs of islands at a time
+    ## bridges cannot cross each other ##
+    ## check horizontal connections for crossing vertical connections ##
+    ## only check two pairs of islands at a time ##
     for islandx1, islandx2 in bridge_list:
         for islandy1, islandy2 in bridge_list:
             if x_coord[islandx1-1] == x_coord[islandx2-1]:
@@ -211,9 +224,12 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
 
 
     
-    file.write("    )\n)\n\n") #bridge constraints are finished here 
+    file.write("    )\n)\n\n")
+    ##bridge constraints are finished here ##
 
     #print(res)
+
+    ## for running the smt solver and getting a model if sat ##
     file.write("(check-sat)\n")
     file.write("(get-model)")
     file.close()
@@ -221,4 +237,4 @@ def hashi_constraints(w, h, island_info, hashi_file, islands_with_0):
     return bridge_list
    
         
-#input(hashi_file)
+#input(hashi_file) ## running function from another file ##

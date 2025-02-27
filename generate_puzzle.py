@@ -2,6 +2,8 @@ import random
 
 def write_cell(puzzle, cell_options):
     threshold = random.randrange(1, 10)
+
+    ## only ~30% of the cells will be islands ##
     if threshold>3:
         puzzle.write(".")
     else:
@@ -11,12 +13,16 @@ def generate_puzzle(height, width):
     puzzle = open("generated_puzzle.txt", "w")
 
     middle_cells = ["1", "2", "3", "4", "5", "6", "7", "8"]
+    ## islands on the edge of the board cannot have a value greater than 6 because they would need bridges in all four directions ##
     edge_cells = ["1", "2", "3", "4", "5", "6"]
+    ## islands in the corners of the board cannot have a value greater than 4 because they would need bridges in at least three directions ##
     corner_cells = ["1", "2", "3", "4"]
+    ## for small puzzles, island values are restricted to less than 4 to reduce generation time ##
     small_puzzles = ["1", "2", "3", "4"]
 
     puzzle.write(f"{height} {width}\n")
 
+    ## puzzles are defined as small if one dimension of the boeard is at most 5 ##
     if height <= 5 or width <= 5:
         for i in range(height):
             for j in range(width):
@@ -40,4 +46,5 @@ def generate_puzzle(height, width):
                 #     puzzle.write(random.choice(cell_options))
             puzzle.write("\n")
     
+    puzzle.close()
     return puzzle.name

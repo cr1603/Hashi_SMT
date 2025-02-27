@@ -1,6 +1,7 @@
 import os
 
 def skip_to(output_help, str):
+    ## iterate through string until given substring is found ##
     while output_help[:(len(str))] != str:
         output_help = output_help[1:]
     return output_help
@@ -25,11 +26,17 @@ def island2func(output_help, island1, adjacency_matrix, bridge_list):
     output_help = skip_to(output_help, "_arg_2")
     island2 = save_output_as_island(output_help)
     #print(f"island2: {island2}")
+
+    ## fill adjacency matrix with existing connections ##
     adjacency_matrix[island1-1][island2-1] = 1
     adjacency_matrix[island2-1][island1-1] = 1
+
     output_help = output_help[1:]
     value = save_bridge_value(output_help)
+
+    ## save bridge connection between islands for further processing ##
     bridge_list.append((island1, island2, value))
+    
     return island1, island2, adjacency_matrix, output_help, bridge_list
 
 def island1func(output_help):
@@ -46,10 +53,11 @@ def check_for_ite(output_help):
     return ite_found
 
 def output_formatter(output, island_info, bridge_list_input):
-    #island_info = island_info[1:] #-1 because of dimension information
+    #island_info = island_info[1:] ## -1 because of dimension information ## -> not used 
     adjacency_matrix = [[0 for _ in range(len(island_info))] for _ in range(len(island_info))]
     #print(len(adjacency_matrix))
 
+    ## all islands are trivially connected to themselves ##
     for i in range(len(adjacency_matrix)):
         for j in range(len(adjacency_matrix)):
             if i == j:
@@ -67,7 +75,7 @@ def output_formatter(output, island_info, bridge_list_input):
     #if output_help[:3] == "sat":
     output_help = skip_to(output_help, "Line")
     #print(output_help)
-    while output_help[:11] != "(define-fun":
+    while output_help[:11] != "(define-fun": ## this part doesn't actually exist in the output anymore after the previous formatting, but the while loop still works for its intended purposes as we get out of it via break ##
         if check_for_ite(output_help):
             output_help = skip_to(output_help, "ite")
             if output_help[:13] == "ite (= _arg_1":
@@ -76,13 +84,15 @@ def output_formatter(output, island_info, bridge_list_input):
                 island1, island2, adjacency_matrix, output_help, bridge_list = island2func(output_help, island1, adjacency_matrix, bridge_list)
                 output_help = skip_to(output_help, ")")
                 #print(output_help)
-                if output_help[4] != "0":
+
+                ## if the else case in ite isn't that other possible bridges have the value 0 but some other value ##
+                if output_help[4] == "1" or output_help[4] == "2":
                     # print(output_help)
                     # print(bridge_list_input)
                     # print(island1, island2)
                     for i1, i2 in bridge_list_input:
                         if (i1 == island1 and i2 != island2) or (i1 == island2 and i2 != island1):
-                            print(i1, i2)
+                            #print(i1, i2)
                             adjacency_matrix[i1-1][i2-1] = 1
                             adjacency_matrix[i2-1][i1-1] = 1
                             value = int(output_help[4])
@@ -92,6 +102,7 @@ def output_formatter(output, island_info, bridge_list_input):
         #print(len(output_help))
         #print(adjacency_matrix)
 
+        ## if all possible bridges have the same value ##
         elif output_help.startswith("Line"):
             output_help = skip_to(output_help, ") Int")
             i = 6
@@ -117,14 +128,20 @@ def output_formatter(output, island_info, bridge_list_input):
 
 
 def verifier(adjacency_matrix):
+    ## checks graph connectivity with the adjacency matrix ##
+
     connectivity_satisfied = False
 
+    ## to check if the adjacency matrix has changed from one pass to the other ##
     changed = True
 
-    while(changed): #Breadth-First-Search BFS
+    while(changed):
         changed = False
+
+        ## Breadth-First-Search BFS ##
         for start in range (len(adjacency_matrix)):
             for end in range (len(adjacency_matrix)):
+                ## check for transitive connectivity ##
                 if adjacency_matrix[start][end] == 0:
                     for middle in range (len(adjacency_matrix)):
                         if adjacency_matrix[start][middle] == 1 and adjacency_matrix[middle][end] == 1:
@@ -137,6 +154,7 @@ def verifier(adjacency_matrix):
     # print(np.matrix(adjacency_matrix))
     # print(len(adjacency_matrix))
 
+    ## array of only 1s to compare to each row of the adjacency matrix ##
     checkerlist = [1 for i in range (len(adjacency_matrix))]
     #print(checkerlist)
     
@@ -146,6 +164,9 @@ def verifier(adjacency_matrix):
     return connectivity_satisfied
 
 def add_to_smt_file(bridge_list, test_file):
+    ## adds solution as non-permissble solution to the .smt2 file if solution contains isolated island clusters ##
+
+    ## delete last two lines of .smt2 file as iterative solving doesn't work ##
     file = open(test_file, 'r+')
 
     file.seek(0, os.SEEK_END)
@@ -163,6 +184,8 @@ def add_to_smt_file(bridge_list, test_file):
         file.seek(pos + 1, os.SEEK_SET)
         file.truncate()
 
+
+    ## add non-permissble solution ##
     file.write("(assert\n")
     file.write("    (not\n")
     file.write("        (and\n")

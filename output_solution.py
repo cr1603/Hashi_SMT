@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as np ## only used for debugging prints ##
 
 def output_solution(width, height, island_info, bridge_list_unsorted, bridge_value):
     output = [["." for _ in range(width)] for _ in range(height)]
@@ -12,19 +12,24 @@ def output_solution(width, height, island_info, bridge_list_unsorted, bridge_val
     bridge_list = sorted(bridge_list_unsorted, key = lambda x: (x[0], x[1]))
     #print(bridge_list)
 
+    ## bridges have different values ##
     if bridge_value == 0:
         island1 = [i1 for i1, i2, bv in bridge_list]
         island2 = [i2 for i1, i2, bv in bridge_list]
         bridge_values = [bv for i1, i2, bv in bridge_list]
+
+    ## all the bridges have the same value ##
     else:
         island1 = [i1 for i1, i2 in bridge_list]
         island2 = [i2 for i1, i2 in bridge_list]
 
-
+    ## set islands ##
     for i in range(len(x_coord)):
         output[x_coord[i]-1][y_coord[i]-1] = value[i]
 
-    #horizontal bridges
+    ## draw horizontal bridges ##
+    ## single bridge: - ##
+    ## double bridge: = ##
     for i in range(height):
         for j in range(width):
             if output[i][j] == ".":
@@ -50,7 +55,9 @@ def output_solution(width, height, island_info, bridge_list_unsorted, bridge_val
                                     #print(np.matrix(output))
                             j += 1
 
-    #vertical bridges                
+    ## draw vertical bridges ##
+    ## single bridge: | ##
+    ## double bridge: $ ##         
     for i in range(height):
         for j in range(width):
             if output[i][j] == ".":
@@ -76,6 +83,7 @@ def output_solution(width, height, island_info, bridge_list_unsorted, bridge_val
     print("solution:")
     #print(np.matrix(output))
 
+    ## format output into asscii art (not matrix representation) for better visual understanding ##
     ascii_output = []
     for i in range(height):
         #print(output[i])
