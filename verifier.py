@@ -111,9 +111,12 @@ def output_formatter(output, island_info, bridge_list_input):
                 i += 1
             bridge_value = int(output_help[6:i])
 
-            if bridge_value == 2:
-                bridge_value -= 1
-            adjacency_matrix = [[bridge_value for _ in range(len(island_info))] for _ in range(len(island_info))]
+            # if bridge_value == 2:
+            #     bridge_value -= 1
+            for i1, i2 in bridge_list_input:
+                adjacency_matrix[i1-1][i2-1] = 1
+                adjacency_matrix[i2-1][i1-1] = 1
+            #adjacency_matrix = [[bridge_value for _ in range(len(island_info))] for _ in range(len(island_info))]
             break                    
 
         else:

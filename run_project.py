@@ -59,7 +59,7 @@ solve_or_generate = input("Solve (s) puzzle or Generate (g) puzzle?\n")
 if solve_or_generate == "s":
 
     ## test_to_run needs to be changed to solve different puzzles ##
-    test_to_run = "1"
+    test_to_run = "23"
     test_file = f"hashi_test{test_to_run}.smt2"
     #test_file = f"hashi_generated_puzzle.smt2"
 
