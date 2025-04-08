@@ -1,10 +1,9 @@
-## Charlotte_thesis
-
 # Topic: Solving and generating puzzles with a connectivity constraint
 
-## Puzzles:
-1. Hashi
-2. Masyu
+This project solves the Hashi puzzle with the SMT solver cvc5. It can also generate puzzles.
+
+## Puzzle:
+Hashi
 
 ### Hashi
 **Connectivity constraint:**
@@ -18,13 +17,9 @@ All islands must be connected to each other
 5. bridges cannot cross each other
 
 
-### Masyu
-**Connectivity constraint:**
-The drawn line must create a continuous loop at the end
-
-**Other constraints:**
-1. the drawn lines cannot cross each other
-2. there are no branches to the line (if stretched the line would become a rectangle/circle)
-3. the line goes through all black and white pearls
-4. white pearls are always crossed straight through, but the line turns in the previous OR the next cell
-5. black pearls are always turned upon, but the line crosses straight through the previous AND the next cell
+## How this project works
+1. You need an SMT solver in the same folder as all the files in this project. This project was written to run cvc5.
+2. To solve a puzzle, you need an input file in a folder "input" in the same folder as the other files in this project. For the easiest way to run this project, the input file is named test{number}.txt. In run_project.py, change test_to_run to the corresponding number.
+3. There is no need to change anything to generate puzzles
+4. Follow the instructions on the console (enter s for solve, g for generate, numbers for width and height)
+5. Have fun!
